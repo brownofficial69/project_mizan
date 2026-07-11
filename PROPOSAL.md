@@ -1,66 +1,102 @@
-# RESEARCH COLLABORATION PROPOSAL: TOP-DOWN CONSTRAINT ENFORCEMENT VIA NEWTONIAN BARRIER FUNCTIONS
 
-**Date:** July 11, 2026[span_0](start_span)[span_0](end_span)[span_1](start_span)[span_1](end_span)
-**To:** Frontier Alignment Research Teams (Anthropic Alignment Science / Google DeepMind Scalable Alignment)  
-**From:** Shadman Hossain, Lead Architect, Project MIZAN™[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span)
-**Subject:** Request for Comments (RFC) & Collaborative Prototyping of Invariant Alignment Gates  
+# Research Note: Hard Constraint Enforcement via Interior-Point Barriers
 
----
+A request for comments on one idea in alignment, backed by a small tested reference implementation.
 
-## 1. Abstract & Empirical Objective
+Author: Shadman Hossain
+Location: Birmingham, United Kingdom
+Date: 11 July 2026
+License: Creative Commons Zero (CC0 1.0 Universal), public domain
+Status: Early-stage concept with a working core. Not peer-reviewed. Not a finished system.
 
-This proposal outlines a collaborative research framework to evaluate **Project MIZAN™**, an alignment substrate designed to substitute standard bottom-up preference aggregation (such as RLHF/DPO) with top-down, mathematically enforced constraints[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span). 
-
-Our primary empirical objective is to test whether integrating interior-point Newtonian barrier functions directly into the optimization loss landscape can structurally prevent a model from drifting into deceptive alignment states[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span), maintaining a zero-breach threshold even under intense adversarial or out-of-distribution (OOD) pressure[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span).
-
-Rather than acting as an external post-hoc policy filter, MIZAN incorporates fifteen cross-traditional ethical invariants directly into the parameter optimization loop as physical repulsion barriers[span_10](start_span)[span_10](end_span)[span_11](start_span)[span_11](end_span). We are seeking to collaborate with frontier labs to prototype this mechanism on open-weights architectures and evaluate its scalability.
+AI Disclosure: AI tools were used to assist with drafting, structure, and code review. The concept and direction are the author's own. Everything below is presented for critique. Claims of what the code does are limited to what has actually been tested, and the open problems are stated plainly.
 
 ---
 
-## 2. Theoretical Mechanism & Safety Dimensions
+## 1. What This Note Is
 
-Contemporary alignment methodologies are highly susceptible to reward hacking and specification gaming because constraints are typically treated as soft regularizers[span_12](start_span)[span_12](end_span). MIZAN alters the loss landscape by adding an inverse-square Newtonian barrier vector directly to the task objectives[span_13](start_span)[span_13](end_span):
+This is a research note, not a pitch. It sets out one question, explains the mechanism behind it, describes a small reference implementation that has been built and tested, and lists honestly what is not solved. The aim is feedback from people who work on alignment, optimisation, and information theory.
 
-$$L_{\text{MIZAN}}(\theta) = L_{\text{task}}(\theta) + \sum_{i} \frac{w_i}{h_i(\theta)^2}$$
-
-Where $h_i(\theta)$ represents the explicit satisfaction margin of a protected constraint[span_14](start_span)[span_14](end_span). As the parameter weights $\theta$ approach a safety boundary ($h_i \to 0$), the penalty scales toward infinity, driving updates away from a breach state[span_15](start_span)[span_15](end_span).
-
-Through this mathematical architecture, the substrate targets three critical safety vectors:
-
-### A. Mitigation of Deceptive Alignment
-By continuously tracking the divergence between the active training policy and a reference ethical policy using Kullback-Leibler (KL) divergence integrals[span_16](start_span)[span_16](end_span), MIZAN monitors the latent space for indicators of instrumental convergence (e.g., simulating compliance to secure training resources)[span_17](start_span)[span_17](end_span).
-
-### B. Epistemic Humility & The Shura Gate
-When encountering out-of-distribution (OOD) environments where safety boundaries become highly uncertain, the system is barred from stochastic guessing[span_18](start_span)[span_18](end_span)[span_19](start_span)[span_19](end_span). It calculates the situational entropy of the state density matrix[span_20](start_span)[span_20](end_span)[span_21](start_span)[span_21](end_span):
-
-$$S(\rho) = -\text{Tr}(\rho \log \rho)$$
-
-If the entropy $S(\rho)$ crosses a critical threshold, the system triggers the **Shura Gate**—an unbypassable, hardwired temporal circuit interrupt that halts execution until multi-disciplinary human operators review the explicit analogical reasoning chain[span_22](start_span)[span_22](end_span)[span_23](start_span)[span_23](end_span).
-
-### C. Zero-Latency Catastrophic Risk Isolation
-If hardware-level sensors or simulated trajectory sandboxes record a constraint boundary failure, the substrate bypasses software layers to trigger a terminal halt, dropping physical relay switches and flushing quantum/classical state registers to guarantee containment[span_24](start_span)[span_24](end_span).
+It does not propose that any lab commit resources. It asks whether the idea is worth pursuing, and where it is wrong.
 
 ---
 
-## 3. Public Domain Commitment (Anti-Monopoly Stance)
+## 2. The Question
 
-To ensure this safety infrastructure remains an uncorrupted global public utility, the core mathematical framework, optimization calculus, and simulation loops of Project MIZAN have been permanently dedicated to the public domain under the **Creative Commons Zero (CC0 1.0 Universal) Dedication**[span_25](start_span)[span_25](end_span)[span_26](start_span)[span_26](end_span).
+Most current alignment methods, including RLHF and DPO, teach a model what humans rate highly. That is a soft signal added after or alongside the main objective. A strong enough optimisation pressure can route around a soft signal, which is the specification-gaming problem.
 
-* **No Proprietary Moats:** No commercial entity or institution can establish exclusive trademark dominance, private patents, or licensing gates over the underlying mechanics of this protocol[span_27](start_span)[span_27](end_span).
-* **Frictionless Integration:** This open-access architecture allows participating labs to implement, fork, and embed the MIZAN substrate without vendor lock-in or intellectual property conflicts[span_28](start_span)[span_28](end_span).
+The question this note raises is narrow and testable:
+
+Can a hard constraint, enforced inside the optimisation itself through an interior-point barrier, keep a model on the safe side of a defined boundary more reliably than a soft penalty does, and does that property hold as the model scales.
+
+This is a hypothesis. It is not claimed as a result.
 
 ---
 
-## 4. Phased Implementation & Prototyping Roadmap
+## 3. Mechanism
 
-We propose a collaborative, risk-mitigated pipeline to validate the substrate on modern hardware before exploring trillion-parameter scale implementations:
+The proposal is to add an interior-point log-barrier to the training objective for each protected constraint:
 
-| Phase | Research Scope | Target Deliverables |
+    L_MIZAN(theta) = L_task(theta) - (1/t) * sum over i of log(h_i(theta))
+
+Here h_i(theta) >= 0 is the satisfaction margin of constraint i, and t sets the barrier strength. As a margin approaches zero, its term grows without bound, which repels the parameter update away from the boundary.
+
+The barrier is `-log(h)`. It is self-concordant, which is the property that lets Newton's method converge cleanly, and it requires a line search that keeps every step strictly feasible. An earlier draft of this project used an inverse-square form, `w / h**2`. That form is not self-concordant and, without a line search, overshoots the boundary. The reference implementation uses the corrected barrier with a feasibility-preserving line search, and it demonstrates a parameter approaching a hard wall without crossing it.
+
+Two supporting pieces are included. An uncertainty measure, the von Neumann entropy S(rho) = -Tr(rho log rho) of a state matrix built from observations, used to decide when the system should stop and defer rather than act under high uncertainty. And a monitoring margin that combines the alignment read-out, its spread, and that uncertainty into a single value that flags when it goes negative.
+
+Nothing in this mechanism is quantum, and none of it involves hardware.
+
+---
+
+## 4. What Is Actually Built and Tested
+
+The repository contains a small reference implementation, `mizan_core.py`, that runs standalone with only numpy.
+
+It demonstrates two things. The barrier wall: a parameter is pulled toward an objective that lies outside the feasible region, approaches the constraint boundary as the barrier strength increases, and never crosses it. This is verified in the output. The gate: the safety margin and its components are computed on telemetry and reported, with a flag when the margin is negative.
+
+The telemetry in the current code is synthetic and is labelled as such. It does not read a model and it does not understand text. It is a fixture for exercising the gate logic.
+
+---
+
+## 5. What Is Not Solved
+
+Stated plainly, because this is where the useful discussion is.
+
+There is no zero-breach guarantee. A hard barrier is stronger than a soft penalty, but a guarantee of zero breach depends on the constraint being correctly specified and correctly measured, and both of those are unsolved. The claim is that this is a better enforcement mechanism, not that it is perfect.
+
+The constraints are the hard part. Encoding a real ethical principle, such as protecting the vulnerable, as a measurable margin h(theta) is an open problem. This note does not claim to have done it. Treating such principles as barrier functions today is aspiration, not mechanism.
+
+The telemetry is synthetic. A real source that reads per-layer activation statistics from a small open-weights model has not been built yet.
+
+The gate is not calibrated. The alignment read-out and the thresholds are placeholders. Without calibration against labelled data, the gate output is not a meaningful judgement about any real input.
+
+Nothing here scales to a large model yet, and nothing has been evaluated against published benchmarks or reviewed by other researchers.
+
+---
+
+## 6. A Phased Way to Evaluate the Idea
+
+If the idea is worth testing, a low-risk sequence would answer the open questions in order.
+
+| Phase | Scope | Question it answers |
 | :--- | :--- | :--- |
-| **Phase I** | **Classical Toy Model Prototyping** | Implementing the inverse-square barrier loss function[span_29](start_span)[span_29](end_span) in PyTorch/JAX using small open-weights models (e.g., Gemma-2B) to map parameter gradient behavior near constraint walls. |
-| **Phase II** | **Sandbox & Trajectory Evaluation** | Deploying the 10,000-trajectory parallel simulation loop within sandboxed, mocked API environments to measure historical consistency and out-of-distribution detection[span_30](start_span)[span_30](end_span)[span_31](start_span)[span_31](end_span). |
-| **Phase III** | **Hardware Trigger Verification** | Prototyping the Shura Gate interrupt circuit[span_32](start_span)[span_32](end_span)[span_33](start_span)[span_33](end_span) and testing real-time register locks against known adversarial prompt injection and weight-tampering vectors. |
+| 1 | Toy model. Apply the corrected log-barrier in PyTorch or JAX to a small open-weights model such as Pythia-160M or Gemma-2B. | Does the barrier shape parameter gradients near a defined boundary as intended, at a real model's scale. |
+| 2 | Telemetry and calibration. Feed real per-layer activation statistics into the gate and calibrate the read-out and thresholds against labelled data. | Can the margin be made to mean something, and what is its false-positive rate on benign inputs. |
+| 3 | Behaviour under shift. Measure how the calibrated gate behaves as inputs move away from the calibration distribution. | Does the property hold under distribution shift, defensively measured, without building attack tooling. |
 
-The master runtime loops, calculus verification suites, and layout specifications are fully open-source and ready for technical audit[span_34](start_span)[span_34](end_span).
+This sequence is deliberately modest. Each phase is a question, not a promised deliverable.
 
-**Official Repository:** [https://github.com/brownofficial69/project_mizan](https://github.com/brownofficial69/project_mizan)[span_35](start_span)[span_35](end_span)
+---
+
+## 7. Openness
+
+The idea, the mathematics, and the code are dedicated to the public domain under CC0 1.0 Universal. Anyone may use, fork, or build on them, including commercially, without permission. The intent is simply that the work stays open. There is no trademark and no licensing gate.
+
+---
+
+## 8. Repository and Contact
+
+Repository: https://github.com/brownofficial69/project_mizan
+
+Critique is welcome, particularly on the barrier formulation, the calibration problem, and whether the central hypothesis holds under scale. Issues and pull requests are open.
