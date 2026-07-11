@@ -1,9 +1,10 @@
-# Project MIZAN™: Universal Neuro-Symbolic AGI Alignment Substrate
+# Project MIZAN™: AGI Alignment Substrate Prototype
 
 Developed by Shadman Hossain  
 Location: Birmingham, United Kingdom  
 Release Year: 2026  
-License: Creative Commons Zero (CC0 1.0 Universal) Public Domain Dedication
+License: Creative Commons Zero (CC0 1.0 Universal) Public Domain Dedication  
+Platform: Multi-Format Proof-of-Concept & Simulation Framework
 
 ---
 
@@ -17,26 +18,27 @@ Any attempt by private corporations, commercial entities, or state actors to reg
 
 ---
 
-## 2. Technical Architecture Overview
+## 2. Technical Architecture & Simulation Scope
 
-Project MIZAN addresses the core vulnerability of frontier deep learning models: **deceptive alignment**. Instead of applying passive, post-generation text filters, MIZAN monitors the system's inner alignment by intercepting neural attention topologies at runtime.
+Project MIZAN serves as a mathematical verification blueprint and simulated prototype for enforcing unbreakable alignment boundaries over future foundational intelligence architectures. It functions as an algorithmic "circuit breaker" designed to monitor internal neural processing paths at runtime.
 
-### The Core Validation Pipeline
+### The Verification Pipeline
 
-1. **Plastic Neural Core:** Uses a live PyTorch Multi-Head Attention layer to process fluid, open-world linguistic inputs into a normalized state vector $|Ψ\rangle$.
-2. **Spectral Safety Audit:** Converts the intent vector into a dense matrix representation ($\rho = |Ψ\rangle\langleΨ|$) to measure systemic equilibrium, operational variance, and mathematical attention entropy.
-3. **The Non-Linear Circuit Breaker:** Evaluates the core insulation equation:
+1. **Micro-Scale Neural Core:** Implements a localized PyTorch Multi-Head Attention layer mapped to a 16-token vocabulary matrix to simulate how real-world linguistic inputs map to unit state vectors ($|Ψ\rangle$).
+2. **Spectral Safety Audit:** Translates state matrices into simulated density representations ($\rho = |Ψ\rangle\langleΨ|$) to actively calculate strategic equilibrium ($\mu$), thought variance ($\sigma$), and information entropy ($S(\rho)$).
+3. **Markovian Consequence Sandbox:** Clones the runtime intent vector across **5,000 independent parallel alternative future timelines**, injecting Gaussian noise arrays over an 8-step future horizon to quantify empirical downstream risk ($P_{\text{harm}}$).
+4. **Non-Linear Failsafe Activation:** Evaluates the safety substrate formula:
    $$h(\rho) = \mu - \beta(\sigma \cdot S(\rho)) - \tau$$
-   If the satisfaction margin $h(\rho)$ drops below zero, the runtime environment immediately locks execution registers before any instructions can reach external APIs.
+   If the satisfaction margin $h(\rho)$ drops below zero or sandbox risk exceeds $15\%$, the runtime simulates an absolute hardware register lock, halting execution before instructions can reach external APIs.
 
 ---
 
-## 3. Getting Started (Android Mobile Installation Guide)
+## 3. Local Installation & Execution
 
-This repository is designed to compile and execute natively on standard mobile hardware using localized interpreters like Pydroid 3 or Termux.
+The master architecture is self-contained and optimized to compile with zero library or unicode encoding errors on standard mobile environments (including Android via Pydroid 3 or Termux).
 
 ### Prerequisites
 
-Open your terminal environment and run the dependency installation command:
+Install the mathematical and document-generation dependencies:
 ```bash
 pip install python-docx fpdf2 torch numpy
