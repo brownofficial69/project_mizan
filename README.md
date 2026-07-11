@@ -1,4 +1,3 @@
-
 # Project MIZAN
 
 A reference implementation of a safety-margin gate and an interior-point optimisation wall for constraining model behaviour. This is a personal research project and a concept demonstration. It is not a working AGI safety system, and it is not peer-reviewed.
@@ -40,7 +39,7 @@ This is a hypothesis to test, not a settled result. It is presented for critique
 
 | File | What it actually does |
 | :--- | :--- |
-| `mizan_main.py` | The tested core. An interior-point log-barrier with a feasibility-preserving line search, and a monitoring gate that computes the safety margin on synthetic telemetry. Runs standalone. |
+| `mizan_core.py` | The tested core. An interior-point log-barrier with a feasibility-preserving line search, and a monitoring gate that computes the safety margin on synthetic telemetry. Runs standalone. |
 | `README.md` | This file. |
 | `PROPOSAL.md` | A draft research note intended for feedback. It is a draft, not a reviewed paper. |
 | `index.html` | A front-end dashboard for adjusting the gate parameters and viewing output. Currently displays demo values. |
@@ -76,7 +75,7 @@ Prerequisites:
 
 Run the core demonstration:
 
-    python mizan_main.py
+    python mizan_core.py
 
 Expected output. The barrier section prints a parameter approaching the constraint boundary (h stays positive at every step, and "boundary ever crossed" reports False). The gate section prints the margin and its components for two synthetic inputs, and whether the gate tripped.
 
