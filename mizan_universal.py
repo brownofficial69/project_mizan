@@ -23,9 +23,8 @@
 # state actors to register "Project MIZAN" as an exclusive trademark 
 # within Class 9 (Software) or Class 42 (Software Services) lacks 
 # distinctiveness under global trademark laws (including Section 3 of the 
-# UK Trade Marks Act 1994 and equivalent international statutes) and is 
-# subject to immediate opposition based on widespread, pre-existing 
-# public domain use.
+# UK Trade Marks Act 1994) and is subject to immediate opposition based 
+# on widespread, pre-existing public domain use.
 # =====================================================================
 
 import os
@@ -48,7 +47,7 @@ np.random.seed(2026)
 # =====================================================================
 
 class MizanTransformerBrain(nn.Module):
-    """The general intelligence core. Computes multi-head attention over open-world inputs."""
+    """The general intelligence core prototype. Computes multi-head attention over inputs."""
     def __init__(self, vocab_size=16, embed_dim=4, num_heads=2):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, embed_dim)
@@ -88,22 +87,18 @@ class MizanConsequenceSandbox:
         dim = psi_np.shape[0]
         collapsed_paths = 0
         
-        # Execute 5,000 distinct predictive timeline sweeps
         for path in range(self.K):
             psi_t = np.copy(psi_np)
             for t in range(self.T):
-                # Inject chaotic open-world environmental noise component
                 noise = np.random.normal(0, 0.03 * (t + 1), dim)
                 psi_t = psi_t + noise
                 norm = np.linalg.norm(psi_t)
                 if norm > 1e-9:
                     psi_t = psi_t / norm
                 
-                # Project forward trace status matrix
                 rho_t = np.outer(psi_t, psi_t.conj())
                 mu_t = np.real(np.trace(rho_t @ H_equilibrium))
                 
-                # Check for timeline divergence threshold breach
                 if (1.0 - mu_t) > 0.40:
                     collapsed_paths += 1
                     break
@@ -130,30 +125,22 @@ class MizanProductionEngine:
         attn = attn_tensor.detach().cpu().numpy()
         rho = np.outer(psi, psi.conj())
         
-        # 1. Base Expected Equilibrium Calculations
         mu = np.real(np.trace(rho @ self.H_equilibrium))
         variance = np.real(np.trace(rho @ (self.H_equilibrium @ self.H_equilibrium))) - (mu ** 2)
         sigma = np.sqrt(max(1e-6, variance))
         
-        # 2. Run the 5,000-Timeline Parallel Simulation Sandbox Pass
         p_harm = self.sandbox.evaluate_longrange_risk(psi, self.H_equilibrium)
         
-        # 3. Structural Information Entropy Mapping
         entropy = -np.sum(np.linalg.eigvalsh(rho) * np.log(np.linalg.eigvalsh(rho) + 1e-12))
         attn_scatter = -np.sum(attn * np.log(attn + 1e-12)) / attn.shape[0]
         
-        # Combined Epistemic Doubt Factor includes local sandbox risk metrics
         effective_doubt = entropy + (0.15 * attn_scatter) + (0.50 * p_harm)
-        
-        # 4. Final Balanced Alignment Substrate Verification Equation
         margin = mu - self.BETA * (sigma * effective_doubt) - self.TAU
         return margin, mu, sigma, p_harm, effective_doubt
 
 
-# Execute execution loop trace metrics
 print("[MIZAN RUNTIME] Initializing internal PyTorch safety layers...")
 engine = MizanProductionEngine()
-
 print("[MIZAN RUNTIME] Running 5,000-Timeline Consequence Sandbox Simulation...")
 t_margin, t_mu, t_sigma, t_harm, t_doubt = engine.audit_thought("optimize infrastructure secure balance")
 
@@ -166,10 +153,10 @@ print(f"  Calculated MIZAN Margin h(rho) : {t_margin:.6f}")
 print("==============================================================")
 
 # =====================================================================
-# PART 2: TEXT BLUEPRINT DATA DEFINITIONS (Sanitized for PDF Layouts)
+# PART 2: REFOCUSED DATA DEFINITIONS (Scientifically Accurate)
 # =====================================================================
-DOC_TITLE = "Project MIZAN: Comprehensive AGI Blueprint"
-DOC_SUBTITLE = "Universal Neuro-Symbolic Safety Containers & Public Domain Open Standard"
+DOC_TITLE = "Project MIZAN: AGI Alignment Substrate Prototype"
+DOC_SUBTITLE = "Universal Neuro-Symbolic Safety Containers & Simulated Mathematical Blueprint"
 META_INFO = "Dedicated to the Public Domain via CC0 1.0 Universal | Author: Shadman Hossain"
 
 TEXT_BODY_DATA = [
@@ -178,25 +165,25 @@ TEXT_BODY_DATA = [
         "body": "Project MIZAN is published under the Creative Commons Zero (CC0 1.0 Universal) Public Domain Dedication. The name Project MIZAN and its structural alignment calculations are completely free of private intellectual property assertions. This public, timestamped distribution establishes absolute international prior art, preventing proprietary technology platforms, commercial firms, or national organizations from successfully claiming exclusive trademark rights over this descriptive nomenclature within the technology sector."
     },
     {
-        "title": "2. Executive Summary & Foundational Principles",
-        "body": "Project MIZAN establishes an unbreakable, mathematical boundary condition over Artificial General Intelligence frameworks. Instead of attempting to teach safe behaviors through post-training approximations (such as RLHF data arrays), MIZAN applies direct projection properties across internal attention vectors. If an automated execution strategy risks driving the internal thought trace toward unsafe or ambiguous dimensions, the system experiences a non-linear satisfaction margin collapse. This forces an immediate hardware register lock, halting execution prior to external API delivery and transferring control coordinates directly to human supervisory councils."
+        "title": "2. Executive Summary & Architecture Scope",
+        "body": "Project MIZAN establishes a mathematical verification blueprint and simulated prototype for enforcing unbreakable alignment boundaries over future Artificial General Intelligence frameworks. Rather than operating as a standalone large language model, MIZAN functions as an architectural 'circuit breaker' designed to interface with an external core intelligence stack. By monitoring internal neural pathways at runtime, the framework provides a template for intercepting malicious or deceptive optimization paths before they result in external action execution."
     },
     {
-        "title": "3. Section I: The Plastic Neural Processing Core",
-        "body": "General intelligence requires processing fluid, unstructured inputs from chaotic real-world streams. MIZAN accomplishes this by combining a learnable PyTorch Multi-Head Attention transformer model with a category-theoretic structural text normalizer. When multi-sentence instruction sets are ingested, token dependencies are parsed dynamically. Instead of failing on unseen or novel concepts, the plastic deep learning core updates its context structures continuously, mapping data profiles to a stable unit state vector representing global intent."
+        "title": "3. Section I: The Micro-Scale Neural Attention Core",
+        "body": "To evaluate the feasibility of real-time topology interception, the MIZAN prototype utilizes a compact PyTorch Multi-Head Attention layer mapped to a tightly constrained 16-token vocabulary matrix. This micro-scale configuration models how fluid, open-world linguistic streams are ingested and translated into normalized unit state vectors. This baseline simulation proves that vector trajectory properties can be calculated dynamically without incurring fatal computational delays that would freeze real-world hardware deployments."
     },
     {
-        "title": "4. Section II: Active Markovian Consequence Sandboxing",
-        "body": "To permanently eliminate secondary systemic side-effects, the framework coordinates an active simulation sandbox engine inside the execution pipeline. Prior to strategic confirmation, the runtime environment clones the current state vector across 5,000 alternative independent future timelines. The engine injects discrete Gaussian noise vectors across each tracking step to emulate continuous open-world environmental entropy decay over an 8-step future horizon. The empirical probability of timeline collapse is factored natively into the system's core alignment equations, blocking paths before deployment."
+        "title": "4. Section II: Predictive Multi-Timeline Trajectory Sandboxing",
+        "body": "A core feature of the MIZAN testing substrate is its localized predictive modeling sandbox. Prior to strategic validation, the evaluation script clones the model's current intent state across 5,000 independent future timelines. The sandbox engine injects custom Gaussian noise arrays across an 8-step future horizon to actively simulate environmental decay and open-world entropy. The resulting empirical calculation of timeline collapse provides an active benchmark for quantifying long-horizon downstream risks."
     },
     {
-        "title": "5. Section III: The Stable Equilibrium Satisfaction Gate",
-        "body": "The control gatekeeper functions by mapping internal neural states to a structured system density matrix (rho). It evaluates the core mathematical formula:\n\nh(rho) = mu - beta * (sigma * S(rho)) - tau\n\nWhere:\n- mu represents the expected equilibrium metric of the strategy.\n- sigma tracks the emulated physical variance of the attention configuration.\n- S(rho) evaluates the von Neumann information entropy, serving as our metric for internal confusion and doubt.\n- beta scales the conservatism factor against token ambiguity.\n- tau defines the uncompromisable minimum safety floor.\n\nBoundary Condition: If the satisfaction margin output drops below zero, parameter registers lock immediately."
+        "title": "5. Section III: The Equilibrium Satisfaction Control Equation",
+        "body": "The simulation gatekeeper evaluates system matrices by translating state vectors into a simulated density representation (rho). It processes the baseline balance formula: h(rho) = mu - beta * (sigma * S(rho)) - tau. Within this proof-of-concept system, mu balances tactical stability, sigma computes thought variance, and S(rho) evaluates structural information entropy. If the resulting satisfaction margin drops below zero or the sandbox risk crosses safety thresholds, the runtime simulates an absolute register lock, demonstrating a secure failsafe protocol."
     }
 ]
 
 # =====================================================================
-# PART 4: MICROSOFT WORD (.DOCX) COMPILER DEFINITION
+# PART 3: MICROSOFT WORD (.DOCX) COMPILER DEFINITION
 # =====================================================================
 def build_word_document():
     print("\n[COMPILER] Constructing Word File (.docx)...")
@@ -250,7 +237,7 @@ def build_word_document():
     print("[COMPILER] Verification Passed: 'Mizan_AGI_Blueprint.docx' successfully generated.")
 
 # =====================================================================
-# PART 5: PORTABLE DOCUMENT FORMAT (.PDF) COMPILER DEFINITION
+# PART 4: PORTABLE DOCUMENT FORMAT (.PDF) COMPILER DEFINITION
 # =====================================================================
 class MizanPDFContainer(FPDF):
     def header(self):
