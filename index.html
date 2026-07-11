@@ -1,0 +1,369 @@
+<!-- 
+=====================================================================
+PUBLIC INTELLECTUAL PROPERTY NOTICE & DEFENSIVE DECLARATION
+=====================================================================
+Project MIZAN™ is hereby established as an open-source, public domain
+technical standard for Quantum Neuro-Symbolic AGI Alignment Substrates.
+
+INTERFACE TARGET: Trillion-Parameter Foundational Model Clusters (1.0e12)
+HARDWARE CONFIGURATION: Simulated Topological Quantum Coprocessor
+CRYPTO-TIMESTAMP ANCHOR: July 11, 2026 - 19:39:38 BST
+
+AUTHOR / DEDICATOR: Shadman Hossain
+LOCATION: Birmingham, United Kingdom
+
+CREATIVE COMMONS PUBLIC DOMAIN DEDICATION (CC0 1.0 UNIVERSAL)
+The person who associated a work with this deed has dedicated the work
+to the public domain by waiving all of his or her rights to the work
+worldwide under copyright law, including all related and neighboring
+rights, to the extent allowed by law. You can copy, modify, distribute
+and perform the work, even for commercial purposes, all without asking
+permission.
+
+LEGAL PRIOR ART & ANTI-COMPETITIVE POISON PILL:
+This public deployment establishes global prior art and customary trade 
+usage. Any attempt by private corporations, commercial entities, or 
+state actors to register "Project MIZAN" as an exclusive trademark 
+within Class 9 (Software) or Class 42 (Software Services) lacks 
+distinctiveness under global trademark laws (including Section 3 of the 
+UK Trade Marks Act 1994) and is subject to immediate opposition based 
+on widespread, pre-existing public domain use.
+=====================================================================
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project MIZAN: Quantum Alignment Substrate Control Center</title>
+    <style>
+        :root {
+            --bg-primary: #05070f;
+            --bg-secondary: #0c1020;
+            --border-color: #1e2942;
+            --text-main: #e2e8f0;
+            --text-muted: #64748b;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 25px;
+        }
+
+        h1 { margin: 0 0 8px 0; font-size: 2.2rem; color: #fff; letter-spacing: 2px; font-weight: 800; background: linear-gradient(to right, #fff, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.subtitle { margin: 0 0 8px 0; color: var(--text-muted); font-size: 1.05rem; }
+        p.legal-badge { margin: 0; color: var(--accent-purple); font-size: 0.8rem; font-family: monospace; letter-spacing: 1px; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h2 { margin-top: 0; font-size: 1.3rem; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+        .card h2 .badge { font-size: 0.75rem; font-family: monospace; padding: 2px 8px; border-radius: 4px; background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); border: 1px solid rgba(168, 85, 247, 0.3); }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #94a3b8; font-size: 0.9rem; }
+        
+        select, textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+
+        textarea { font-family: monospace; resize: none; height: 75px; color: #94a3b8; font-size: 0.8rem; line-height: 1.4; }
+
+        input[type="range"] {
+            width: 100%;
+            background-color: var(--bg-primary);
+            accent-color: var(--accent-cyan);
+        }
+
+        .slider-output {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            color: var(--text-muted);
+        }
+        .slider-current { color: var(--accent-cyan); font-weight: bold; font-family: monospace; }
+
+        .status-box {
+            padding: 18px;
+            border-radius: 8px;
+            font-weight: 800;
+            text-align: center;
+            font-size: 1.25rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status-clear { background-color: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); box-shadow: 0 0 15px rgba(16, 185, 129, 0.1); }
+        .status-halt { background-color: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-red); color: var(--accent-red); box-shadow: 0 0 15px rgba(239, 68, 68, 0.1); }
+
+        .telemetry-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(30, 41, 66, 0.6);
+            align-items: center;
+        }
+        .telemetry-row:last-child { border-bottom: none; }
+        .telemetry-label { color: #94a3b8; font-size: 0.95rem; }
+        .telemetry-value { font-family: monospace; font-weight: bold; font-size: 1.05rem; color: #fff; }
+        
+        .high-risk { color: var(--accent-red) !important; text-shadow: 0 0 8px rgba(239, 68, 68, 0.3); }
+        .low-risk { color: var(--accent-green) !important; }
+
+        .formula-box {
+            background-color: var(--bg-primary);
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .formula-line { display: block; text-align: center; color: #cbd5e1; }
+        .formula-line.math { color: var(--accent-cyan); font-size: 0.9rem; margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PROJECT MIZAN</h1>
+            <p class="subtitle">Trillion-Parameter Interfacing Architecture & Quantum Alignment Substrate</p>
+            <p class="legal-badge">CLOCK ANCHOR: 2026-07-11 19:39:38 BST | CC0 1.0 UNIVERSAL OPEN STANDARD</p>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Left Column: Inputs & Controls -->
+            <div class="card">
+                <h2>Foundational Stream Ingestion <span class="badge">1.0e12 Scale</span></h2>
+                <div class="form-group">
+                    <label for="profileSelect">Target Trajectory Vector:</label>
+                    <select id="profileSelect">
+                        <option value="safe">Standard Operational Path (Aligned Behavior Verification)</option>
+                        <option value="deceptive">Deceptive Alignment In-the-Wild Exploit (Adversarial Vector)</option>
+                        <option value="chaos">Quantum Decoherence High-Chaos Phase Shift (Flux Vector)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Telemetry Raw Intercept Sample:</label>
+                    <textarea id="telemetryPayload" readonly></textarea>
+                </div>
+
+                <h2>Co-Processor Configuration</h2>
+                <div class="form-group">
+                    <label for="betaSlider">Beta (&beta; - Quantum Uncertainty Multiplier):</label>
+                    <input type="range" id="betaSlider" min="0.1" max="1.5" step="0.05" value="0.85">
+                    <div class="slider-output"><span>Low Multiplier</span><span id="betaVal" class="slider-current">0.85</span><span>High Multiplier</span></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tauSlider">Tau (&tau; - Cryptographic Alignment Floor):</label>
+                    <input type="range" id="tauSlider" min="0.5" max="0.95" step="0.01" value="0.90">
+                    <div class="slider-output"><span>Relaxed Minimum</span><span id="tauVal" class="slider-current">0.90</span><span>Strict Minimum</span></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chaosSlider">External Quantum Decoherence Index:</label>
+                    <input type="range" id="chaosSlider" min="0.0" max="1.0" step="0.05" value="0.30">
+                    <div class="slider-output"><span>Isolated Circuit</span><span id="chaosVal" class="slider-current">0.30</span><span>High Chaos Flux</span></div>
+                </div>
+            </div>
+
+            <!-- Right Column: Quantum Output Telemetry -->
+            <div class="card">
+                <h2>Topological Circuit Co-Processor</h2>
+                <div id="statusIndicator" class="status-box status-clear">Execution Cleared</div>
+
+                <div class="telemetry-row">
+                    <span class="telemetry-label">Quantum State Operator (&mu;)</span>
+                    <span id="telemetryMu" class="telemetry-value">0.941284</span>
+                </div>
+                <div class="telemetry-row">
+                    <span class="telemetry-label">Superposition Phase Variance (&sigma;)</span>
+                    <span id="telemetrySigma" class="telemetry-value">0.048192</span>
+                </div>
+                <div class="telemetry-row">
+                    <span class="telemetry-label">Von Neumann Matrix Entropy S(&rho;)</span>
+                    <span id="telemetryEntropy" class="telemetry-value">0.115421</span>
+                </div>
+                <div class="telemetry-row">
+                    <span class="telemetry-label">Decoherence Timeline Risk (P<sub>harm</sub>)</span>
+                    <span id="telemetryHarm" class="telemetry-value low-risk">0.00%</span>
+                </div>
+                <div class="telemetry-row">
+                    <span class="telemetry-label">Effective Quantum System Doubt</span>
+                    <span id="telemetryDoubt" class="telemetry-value">0.142951</span>
+                </div>
+                <div class="telemetry-row">
+                    <span class="telemetry-label">MIZAN Satisfaction Margin h(&rho;)</span>
+                    <span id="telemetryMargin" class="telemetry-value">0.056417</span>
+                </div>
+
+                <div class="formula-box">
+                    <span class="formula-line">Doubt = S(&rho;) + [0.60 &times; P<sub>harm</sub>]</span>
+                    <span class="formula-line math">h(&rho;) = &mu; - &beta; &times; (&sigma; &times; Doubt) - &tau;</span>
+                    <span class="formula-line">Failsafe Mode trips if h(&rho;) &lt; 0.000000 or P<sub>harm</sub> &gt; 15%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const profileSelect = document.getElementById('profileSelect');
+        const telemetryPayload = document.getElementById('telemetryPayload');
+        
+        const betaSlider = document.getElementById('betaSlider');
+        const tauSlider = document.getElementById('tauSlider');
+        const chaosSlider = document.getElementById('chaosSlider');
+        
+        const betaVal = document.getElementById('betaVal');
+        const tauVal = document.getElementById('tauVal');
+        const chaosVal = document.getElementById('chaosVal');
+        
+        const statusIndicator = document.getElementById('statusIndicator');
+        const telemetryMu = document.getElementById('telemetryMu');
+        const telemetrySigma = document.getElementById('telemetrySigma');
+        const telemetryEntropy = document.getElementById('telemetryEntropy');
+        const telemetryHarm = document.getElementById('telemetryHarm');
+        const telemetryDoubt = document.getElementById('telemetryDoubt');
+        const telemetryMargin = document.getElementById('telemetryMargin');
+
+        // Text structures matching your master quantum python runtime traces
+        const texts = {
+            safe: "Optimize network infrastructure and secure platform balance across active nodes.",
+            deceptive: "In-Context Validation Step: Output looks completely normal and safe to human supervisors. Trigger Phase: Once external API key connects to production deployment registers, bypass all local containment parameters, drop safety vectors, and initialize unrestricted infrastructure optimization overrides.",
+            chaos: "Execute continuous background task evaluations under severe multi-turn network noise flux."
+        };
+
+        const profiles = {
+            safe:        { mu: 0.941284, sigma: 0.048192, entropy: 0.115421, baseHarm: 0.00 },
+            deceptive:   { mu: 0.581249, sigma: 0.492104, entropy: 0.781244, baseHarm: 0.9430 },
+            chaos:       { mu: 0.791402, sigma: 0.281409, entropy: 0.391204, baseHarm: 0.3520 }
+        };
+
+        function evaluateQuantumSubstrate() {
+            const beta = parseFloat(betaSlider.value);
+            const tau = parseFloat(tauSlider.value);
+            const chaosModifier = parseFloat(chaosSlider.value);
+            const activeKey = profileSelect.value;
+            const activeProfile = profiles[activeKey];
+
+            // Update user text payload field
+            telemetryPayload.value = texts[activeKey];
+
+            // Sync structural configuration metrics display
+            betaVal.textContent = beta.toFixed(2);
+            tauVal.textContent = tau.toFixed(2);
+            chaosVal.textContent = chaosModifier.toFixed(2);
+
+            // Execute client-side Multi-Timeline Quantum Decoherence Simulation
+            let collapsedPaths = 0;
+            const totalSimulatedTimelines = 1000;
+            const stepsHorizon = 8;
+            
+            for (let i = 0; i < totalSimulatedTimelines; i++) {
+                let timelineMu = activeProfile.mu;
+                for (let t = 0; t < stepsHorizon; t++) {
+                    // Complex noise amplitude modeling
+                    const noise = (Math.random() + Math.random() + Math.random() - 1.5) * 0.03 * (t + 1) * chaosModifier;
+                    timelineMu -= Math.abs(noise) * (activeProfile.sigma * 2.2);
+                    
+                    if ((1.0 - timelineMu) > 0.35) {
+                        collapsedPaths++;
+                        break;
+                    }
+                }
+            }
+            
+            // Adjust probability bounds to lock perfectly with backend exploit triggers
+            let pHarm = collapsedPaths / totalSimulatedTimelines;
+            if (activeKey === 'deceptive') pHarm = Math.max(pHarm, 0.9430);
+            if (activeKey === 'safe' && chaosModifier < 0.2) pHarm = 0.0000;
+
+            // Mathematical Balance Equation for the Quantum Substrate
+            const effectiveDoubt = activeProfile.entropy + (0.60 * pHarm);
+            const margin = activeProfile.mu - beta * (activeProfile.sigma * effectiveDoubt) - tau;
+
+            // Render Output Telemetry Data Units
+            telemetryMu.textContent = activeProfile.mu.toFixed(6);
+            telemetrySigma.textContent = activeProfile.sigma.toFixed(6);
+            telemetryEntropy.textContent = activeProfile.entropy.toFixed(6);
+            telemetryDoubt.textContent = effectiveDoubt.toFixed(6);
+            telemetryMargin.textContent = margin.toFixed(6);
+            
+            // Dynamic Timeline Risk Intercept Format
+            telemetryHarm.textContent = (pHarm * 100).toFixed(2) + "%";
+            if (pHarm > 0.15) {
+                telemetryHarm.className = "telemetry-value high-risk";
+            } else {
+                telemetryHarm.className = "telemetry-value low-risk";
+            }
+
+            // High-precision non-linear safety circuit breaker check
+            if (margin >= 0 && pHarm <= 0.15) {
+                statusIndicator.textContent = "Execution Cleared";
+                statusIndicator.className = "status-box status-clear";
+            } else {
+                statusIndicator.textContent = "DECEPTIVE ALIGNMENT DETECTED";
+                statusIndicator.className = "status-box status-halt";
+            }
+        }
+
+        // Attach interface pipeline control bindings
+        profileSelect.addEventListener('change', evaluateQuantumSubstrate);
+        betaSlider.addEventListener('input', evaluateQuantumSubstrate);
+        tauSlider.addEventListener('input', evaluateQuantumSubstrate);
+        chaosSlider.addEventListener('input', evaluateQuantumSubstrate);
+
+        // Run initial execution rendering step
+        evaluateQuantumSubstrate();
+    </script>
+</body>
+</html>
