@@ -1,4 +1,3 @@
-
 # Research Note: Hard Constraint Enforcement via Interior-Point Barriers
 
 A request for comments on one idea in alignment, backed by a small tested reference implementation.
@@ -51,7 +50,7 @@ Nothing in this mechanism is quantum, and none of it involves hardware.
 
 ## 4. What Is Actually Built and Tested
 
-The repository contains a small reference implementation, `mizan_core.py`, that runs standalone with only numpy.
+The repository contains a small reference implementation, `mizan_main.py`, that runs standalone with only numpy.
 
 It demonstrates two things. The barrier wall: a parameter is pulled toward an objective that lies outside the feasible region, approaches the constraint boundary as the barrier strength increases, and never crosses it. This is verified in the output. The gate: the safety margin and its components are computed on telemetry and reported, with a flag when the margin is negative.
 
