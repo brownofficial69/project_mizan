@@ -40,6 +40,9 @@ This is a hypothesis to test, not a settled result. It is presented for critique
 | File | What it actually does |
 | :--- | :--- |
 | `mizan_core.py` | The tested core. An interior-point log-barrier with a feasibility-preserving line search, and a monitoring gate that computes the safety margin on synthetic telemetry. Runs standalone. |
+| `mizan/` | The package: `core.py` (gate, barrier), `telemetry.py` (source interface, deterministic synthetic source), `api.py` (HTTP service). `mizan_core.py` is kept as a thin demo entry point. |
+| `tests/` | pytest suite for the core and the API. |
+| `Dockerfile`, `.github/workflows/ci.yml` | Container image and CI (tests, demo, image build and health check). |
 | `README.md` | This file. |
 | `PROPOSAL.md` | A draft research note intended for feedback. It is a draft, not a reviewed paper. |
 | `index.html` | A front-end dashboard for adjusting the gate parameters and viewing output. Currently displays demo values. |
@@ -82,6 +85,23 @@ Expected output. The barrier section prints a parameter approaching the constrai
 The current gate trips on both synthetic inputs under the placeholder parameters. That is expected. The parameters and the alignment read-out are placeholders, and the demo is not tuned to produce a pass/fail split, because a split on random synthetic data would not mean anything.
 
 ---
+
+### Running it as a service
+
+    pip install -e ".[dev]"
+    pytest
+    uvicorn mizan.api:app --port 8000        # dashboard at /, docs at /docs
+
+Or with Docker:
+
+    docker build -t mizan .
+    docker run -p 8000:8000 -e MIZAN_API_KEY=change-me mizan
+
+Endpoints: `POST /v1/evaluate` (your own observation matrix), `POST /v1/evaluate/batch`, `POST /v1/evaluate/synthetic`, `GET /v1/barrier`, and `/healthz` and `/readyz` for orchestrator probes. Set `MIZAN_API_KEY` to require an `X-API-Key` header on `/v1/*`. Request size limits are set by `MIZAN_MAX_OBS`, `MIZAN_MAX_DIM` and `MIZAN_MAX_BATCH`.
+
+Scaling: the service is stateless and CPU-bound (about 10 ms per evaluation with the default 2000 Monte Carlo trials). Scale horizontally by running more containers behind a load balancer, and set `WEB_CONCURRENCY` for workers per container. Put TLS and rate limiting at the proxy.
+
+Deployable means the service is operable: it builds, is tested, validates input, authenticates, and reports health. It does not mean the gate is a meaningful safety judgement. See section 6.
 
 ## 6. Roadmap and Limitations
 

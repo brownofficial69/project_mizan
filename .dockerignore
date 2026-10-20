@@ -1,0 +1,9 @@
+.git
+.github
+tests
+__pycache__
+*.pyc
+.venv
+*.docx
+document.md
+compile_mizan.py
