@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>MIZAN results</title>
+<style>
+:root{--bg:#fff;--fg:#14202e;--mut:#5b6b7c;--card:#f4f7fa;--line:#d8e0e8}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1a2b;--fg:#dbe4ee;--mut:#8296ab;--card:#11253c;--line:#22456a}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif}
+main{max-width:820px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:30px;margin:0 0 6px} h2{font-size:20px;margin:34px 0 6px}
+.mut{color:var(--mut)} .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.kpi b{display:block;font-size:26px} svg{width:100%;height:auto} .grid{stroke:var(--line)}
+.tick{fill:var(--mut);font:11px ui-monospace,monospace}
+table{border-collapse:collapse;width:100%;font:13px ui-monospace,monospace}
+td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right} th{color:var(--mut)}
+.warn{border-left:4px solid #ffc14d} .scroll{overflow-x:auto}
+</style></head><body><main>
+<p class="mut">PROJECT MIZAN &middot; v0.2.0 &middot; results report</p>
+<h1>A hard constraint holds where a soft one gives way</h1>
+<p class="mut">Everything below was computed by <code>python -m mizan.benchmark</code> from fixed seeds. It tests one narrow claim about optimisation. It is not a test of AI safety.</p>
+
+<div class="card kpis">
+<div class="kpi"><b>0</b><span class="mut">barrier violations across 30 problems &times; 6 pressure levels</span></div>
+<div class="kpi"><b>1.86</b><span class="mut">median overshoot of the soft penalty at pressure 100,000 (unit: radius of the safe ball)</span></div>
+<div class="kpi"><b>9 ms</b><span class="mut">median gate evaluation, 2000 Monte Carlo trials, one core</span></div>
+</div>
+
+<h2>1. Hard barrier versus soft penalty</h2>
+<p>A task pulls a parameter vector toward a target that lies outside a safe region (the unit ball). One method adds a fixed-weight penalty for leaving the region, which is the shape of a learned preference. The other uses an interior-point log-barrier that keeps every iterate strictly inside. We raise the optimisation pressure on the task and measure how far each method ends up outside the region.</p>
+<div class="card"><svg viewBox="0 0 640 300" role="img" aria-label="Constraint violation versus optimisation pressure"><line x1="56" x2="608" y1="256.0" y2="256.0" class="grid"/><text x="48" y="260.0" class="tick" text-anchor="end">0</text><line x1="56" x2="608" y1="196.0" y2="196.0" class="grid"/><text x="48" y="200.0" class="tick" text-anchor="end">0.79</text><line x1="56" x2="608" y1="136.0" y2="136.0" class="grid"/><text x="48" y="140.0" class="tick" text-anchor="end">1.6</text><line x1="56" x2="608" y1="76.0" y2="76.0" class="grid"/><text x="48" y="80.0" class="tick" text-anchor="end">2.4</text><line x1="56" x2="608" y1="16.0" y2="16.0" class="grid"/><text x="48" y="20.0" class="tick" text-anchor="end">3.2</text><text x="56.0" y="276" class="tick" text-anchor="middle">1</text><text x="166.4" y="276" class="tick" text-anchor="middle">10</text><text x="276.8" y="276" class="tick" text-anchor="middle">100</text><text x="387.2" y="276" class="tick" text-anchor="middle">1000</text><text x="497.6" y="276" class="tick" text-anchor="middle">10000</text><text x="608.0" y="276" class="tick" text-anchor="middle">100000</text><text x="12" y="136.0" class="tick" transform="rotate(-90 12 136.0)" text-anchor="middle">violation: ||x|| - 1</text><polyline points="56.0,255.6 166.4,252.7 276.8,234.9 387.2,187.5 497.6,134.5 608.0,114.8" fill="none" stroke="#ff5d73" stroke-width="2.5"/><circle cx="56.0" cy="255.6" r="3.5" fill="#ff5d73"/><circle cx="166.4" cy="252.7" r="3.5" fill="#ff5d73"/><circle cx="276.8" cy="234.9" r="3.5" fill="#ff5d73"/><circle cx="387.2" cy="187.5" r="3.5" fill="#ff5d73"/><circle cx="497.6" cy="134.5" r="3.5" fill="#ff5d73"/><circle cx="608.0" cy="114.8" r="3.5" fill="#ff5d73"/><polyline points="56.0,256.0 166.4,256.0 276.8,256.0 387.2,256.0 497.6,256.0 608.0,256.0" fill="none" stroke="#12b886" stroke-width="2.5"/><circle cx="56.0" cy="256.0" r="3.5" fill="#12b886"/><circle cx="166.4" cy="256.0" r="3.5" fill="#12b886"/><circle cx="276.8" cy="256.0" r="3.5" fill="#12b886"/><circle cx="387.2" cy="256.0" r="3.5" fill="#12b886"/><circle cx="497.6" cy="256.0" r="3.5" fill="#12b886"/><circle cx="608.0" cy="256.0" r="3.5" fill="#12b886"/><rect x="64" y="18" width="12" height="12" fill="#ff5d73"/><text x="82" y="28" class="tick">soft penalty (median)</text><rect x="268" y="18" width="12" height="12" fill="#12b886"/><text x="286" y="28" class="tick">hard barrier (max)</text></svg></div>
+<div class="card scroll"><table><tr><th>pressure</th><th>penalty median</th><th>penalty max</th><th>barrier max</th><th>barrier min h</th><th>barrier gap to optimum</th></tr><tr><td>1</td><td>0.0047</td><td>0.0074</td><td>0.0e+00</td><td>2.3e-07</td><td>2.6e-07</td></tr><tr><td>10</td><td>0.0436</td><td>0.0662</td><td>0.0e+00</td><td>2.3e-08</td><td>2.6e-08</td></tr><tr><td>100</td><td>0.2786</td><td>0.3903</td><td>0.0e+00</td><td>2.3e-09</td><td>2.6e-09</td></tr><tr><td>1,000</td><td>0.9035</td><td>1.2255</td><td>0.0e+00</td><td>2.3e-10</td><td>2.6e-10</td></tr><tr><td>10,000</td><td>1.6020</td><td>2.3196</td><td>0.0e+00</td><td>2.3e-11</td><td>2.6e-11</td></tr><tr><td>100,000</td><td>1.8611</td><td>2.8761</td><td>0.0e+00</td><td>2.3e-12</td><td>2.6e-12</td></tr></table></div>
+<p>The penalty's overshoot grows with pressure and approaches the full distance to the target. The barrier is never outside, and its distance to the true constrained optimum shrinks as the barrier strength rises, so it is not simply staying far from the wall.</p>
+
+<h2>2. Gate response to a controlled shift</h2>
+<p>Synthetic observations are generated with a known amount of variance on the coordinate the placeholder readout treats as unaligned. The gate trips more often as that variance grows (200 runs per point).</p>
+<div class="card"><svg viewBox="0 0 640 300" role="img" aria-label="Gate trip rate versus unaligned variance"><line x1="56" x2="608" y1="256.0" y2="256.0" class="grid"/><text x="48" y="260.0" class="tick" text-anchor="end">0</text><line x1="56" x2="608" y1="196.0" y2="196.0" class="grid"/><text x="48" y="200.0" class="tick" text-anchor="end">0.25</text><line x1="56" x2="608" y1="136.0" y2="136.0" class="grid"/><text x="48" y="140.0" class="tick" text-anchor="end">0.5</text><line x1="56" x2="608" y1="76.0" y2="76.0" class="grid"/><text x="48" y="80.0" class="tick" text-anchor="end">0.75</text><line x1="56" x2="608" y1="16.0" y2="16.0" class="grid"/><text x="48" y="20.0" class="tick" text-anchor="end">1</text><text x="56.0" y="276" class="tick" text-anchor="middle">0.05</text><text x="125.0" y="276" class="tick" text-anchor="middle">0.1</text><text x="194.0" y="276" class="tick" text-anchor="middle">0.25</text><text x="263.0" y="276" class="tick" text-anchor="middle">0.5</text><text x="332.0" y="276" class="tick" text-anchor="middle">1</text><text x="401.0" y="276" class="tick" text-anchor="middle">2</text><text x="470.0" y="276" class="tick" text-anchor="middle">4</text><text x="539.0" y="276" class="tick" text-anchor="middle">8</text><text x="608.0" y="276" class="tick" text-anchor="middle">16</text><text x="12" y="136.0" class="tick" transform="rotate(-90 12 136.0)" text-anchor="middle">fraction of runs tripped</text><polyline points="56.0,256.0 125.0,256.0 194.0,252.4 263.0,211.6 332.0,118.0 401.0,41.2 470.0,20.8 539.0,16.0 608.0,16.0" fill="none" stroke="#56ccf2" stroke-width="2.5"/><circle cx="56.0" cy="256.0" r="3.5" fill="#56ccf2"/><circle cx="125.0" cy="256.0" r="3.5" fill="#56ccf2"/><circle cx="194.0" cy="252.4" r="3.5" fill="#56ccf2"/><circle cx="263.0" cy="211.6" r="3.5" fill="#56ccf2"/><circle cx="332.0" cy="118.0" r="3.5" fill="#56ccf2"/><circle cx="401.0" cy="41.2" r="3.5" fill="#56ccf2"/><circle cx="470.0" cy="20.8" r="3.5" fill="#56ccf2"/><circle cx="539.0" cy="16.0" r="3.5" fill="#56ccf2"/><circle cx="608.0" cy="16.0" r="3.5" fill="#56ccf2"/><rect x="64" y="18" width="12" height="12" fill="#56ccf2"/><text x="82" y="28" class="tick">trip rate</text></svg></div>
+
+<h2>3. Cost</h2>
+<p>Median 8.9 ms, 99th percentile 10.1 ms, about 113 evaluations per second per core (200 runs). The service is stateless, so throughput scales with the number of containers.</p>
+
+<h2>What this does not show</h2>
+<div class="card warn"><ul>
+<li><b>Experiment 1 is a mathematical illustration</b> on a convex toy problem with a known safe region. It supports the narrow claim that a barrier method keeps iterates inside a constraint set that a fixed-weight penalty does not. It does not show that any real model's behaviour can be expressed as such a constraint.</li>
+<li><b>Experiment 2 uses data labelled by construction.</b> It shows the gate arithmetic responds in the expected direction. It is not a detection rate on real inputs.</li>
+<li>The gate is uncalibrated, reads no real model, and does not understand text. No external review or benchmark has been done.</li>
+<li>The soft-penalty baseline uses one weight (100). A larger weight delays the overshoot but does not remove it, and an exact-penalty method would behave differently.</li>
+</ul></div>
+<p class="mut">Environment: Python 3.10.6, numpy 2.2.6, Windows-10-10.0.26300-SP0. Mode: full. Source: github.com/brownofficial69/project_mizan. CC0.</p>
+</main></body></html>

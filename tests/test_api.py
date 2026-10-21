@@ -59,6 +59,19 @@ def test_api_key_enforced(client, monkeypatch):
     assert client.get("/healthz").status_code == 200  # probes stay open
 
 
+def test_benchmark_quick_and_report(tmp_path, client):
+    from mizan.benchmark import main
+    res = main(["--quick", "--out", str(tmp_path)])
+    assert all(r["barrier_violation_max"] == 0.0 and r["barrier_min_h"] > 0 for r in res["wall"]["rows"])
+    # soft penalty overshoots more as pressure rises
+    pv = [r["penalty_violation_median"] for r in res["wall"]["rows"]]
+    assert pv == sorted(pv) and pv[-1] > 1.0
+    # gate trip rate rises with unaligned variance
+    tr = [r["trip_rate"] for r in res["gate"]["rows"]]
+    assert tr[0] < 0.1 and tr[-1] > 0.9
+    assert "What this does not show" in (tmp_path / "report.html").read_text(encoding="utf-8")
+
+
 def test_dashboard_served(client):
     r = client.get("/")
     assert r.status_code == 200 and "MIZAN" in r.text

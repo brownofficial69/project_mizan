@@ -86,6 +86,12 @@ The current gate trips on both synthetic inputs under the placeholder parameters
 
 ---
 
+### Results report
+
+    python -m mizan.benchmark        # writes results/results.json and results/report.html
+
+`results/report.html` is a self-contained page (also served at `/report`) with three computed experiments: a hard barrier against a soft penalty under rising optimisation pressure, the gate's response to a controlled shift, and latency. The report states what it does not show. Experiment 2 uses data labelled by construction, so it is not a detection rate.
+
 ### Running it as a service
 
     pip install -e ".[dev]"

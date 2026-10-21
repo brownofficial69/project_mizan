@@ -18,6 +18,7 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: pytest -q
       - run: python mizan_core.py
+      - run: python -m mizan.benchmark --quick --out "$RUNNER_TEMP/results"
 
   docker:
     runs-on: ubuntu-latest

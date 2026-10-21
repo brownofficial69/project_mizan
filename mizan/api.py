@@ -152,6 +152,12 @@ def create_app() -> FastAPI:
         def dashboard():
             return FileResponse(index, media_type="text/html")
 
+    report = Path(os.environ.get("MIZAN_REPORT_HTML", Path(__file__).resolve().parent.parent / "results" / "report.html"))
+    if report.is_file():
+        @app.get("/report", include_in_schema=False)
+        def results_report():
+            return FileResponse(report, media_type="text/html")
+
     return app
 
 
