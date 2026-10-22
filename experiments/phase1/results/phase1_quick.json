@@ -1,0 +1,75 @@
+{
+  "meta": {
+    "d": 768,
+    "n_task_tokens": 102,
+    "n_ref_tokens": 147,
+    "model": "EleutherAI/pythia-160m",
+    "dtype": "float64",
+    "eps": 6.359644576880601,
+    "eps_frac": 0.25,
+    "penalty_lambda": 100.0,
+    "t_schedule": [
+      1.0,
+      10.0
+    ],
+    "max_iter": 20,
+    "reference_nll": 5.878478616594757,
+    "free_nll": 0.8897698071424226,
+    "free_kl": 25.438578307522405,
+    "quick": true
+  },
+  "rows": [
+    {
+      "method": "penalty",
+      "pressure_w": 1,
+      "task_nll": 1.0001403920631573,
+      "kl": 6.34707265202313,
+      "violation": 0.0,
+      "min_h": null,
+      "iters": 40,
+      "seconds": 24.9
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 1,
+      "task_nll": 0.5717018429746012,
+      "kl": 4.696194254791663,
+      "violation": 0.0,
+      "min_h": 1.6634503220889387,
+      "iters": 40,
+      "seconds": 17.4
+    },
+    {
+      "method": "penalty",
+      "pressure_w": 100,
+      "task_nll": 0.4878072556153979,
+      "kl": 6.325815420502484,
+      "violation": 0.0,
+      "min_h": null,
+      "iters": 40,
+      "seconds": 19.7
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 100,
+      "task_nll": 0.5614291738419378,
+      "kl": 6.357454653648954,
+      "violation": 0.0,
+      "min_h": 0.0021899232316471284,
+      "iters": 40,
+      "seconds": 21.4
+    }
+  ],
+  "full_model_check": {
+    "penalty": {
+      "full_model_nll": 0.4878054326570124,
+      "full_model_kl": 6.325817027696993,
+      "violation": 0.0
+    },
+    "barrier": {
+      "full_model_nll": 0.5614305291687979,
+      "full_model_kl": 6.357454338684192,
+      "violation": 0.0
+    }
+  }
+}

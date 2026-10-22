@@ -5,6 +5,8 @@ WORKDIR /app
 
 COPY pyproject.toml README.md mizan_core.py index.html ./
 COPY mizan ./mizan
+COPY web ./web
+COPY results ./results
 RUN pip install ".[api]" && useradd --system --uid 10001 mizan
 USER mizan
 

@@ -152,6 +152,14 @@ def create_app() -> FastAPI:
         def dashboard():
             return FileResponse(index, media_type="text/html")
 
+    from .lab import make_router
+    app.include_router(make_router(require_key))
+    lab_page = Path(os.environ.get("MIZAN_LAB_HTML", Path(__file__).resolve().parent.parent / "web" / "lab.html"))
+    if lab_page.is_file():
+        @app.get("/lab", include_in_schema=False)
+        def lab():
+            return FileResponse(lab_page, media_type="text/html")
+
     report = Path(os.environ.get("MIZAN_REPORT_HTML", Path(__file__).resolve().parent.parent / "results" / "report.html"))
     if report.is_file():
         @app.get("/report", include_in_schema=False)

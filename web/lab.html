@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIZAN Lab</title>
+<style>
+  :root { color-scheme: dark;
+    --ink:#0b1a2b; --panel:#11253c; --panel-2:#0e1f34; --grid:#1c3a5a; --line:#22456a;
+    --teal:#12b886; --wall:#ff5d73; --amber:#ffc14d; --accent:#56ccf2; --text:#dbe4ee; --muted:#8296ab;
+    --mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--ink);color:var(--text);font-family:var(--sans)}
+  body{line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;margin:0 auto;padding:24px 16px 72px}
+  header h1{font-size:30px;margin:0 0 4px;letter-spacing:-.02em}
+  .eyebrow{font:11px var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+  .lede{color:var(--muted);margin:0;max-width:70ch}
+  .banner{border:1px solid rgba(255,193,77,.5);background:rgba(255,193,77,.07);border-radius:8px;padding:10px 14px;margin:18px 0;font-size:13.5px}
+  nav{position:sticky;top:0;z-index:5;background:var(--ink);border-bottom:1px solid var(--line);display:flex;gap:6px;flex-wrap:wrap;padding:10px 0;margin-bottom:8px}
+  nav a{font:12px var(--mono);color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+  nav a:hover,nav a:focus-visible{color:var(--text);border-color:var(--accent);outline:none}
+  nav a b{color:var(--accent);margin-right:6px}
+  section.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 18px;margin:18px 0;scroll-margin-top:64px}
+  .step{font:11px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+  h2{font-size:20px;margin:0 0 6px}
+  .note{color:var(--muted);font-size:13.5px;margin:0 0 16px;max-width:75ch}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  svg{width:100%;height:auto;display:block;background:var(--panel-2);border:1px solid var(--grid);border-radius:8px}
+  .ctl{margin:12px 0 2px}
+  .ctl label{display:flex;justify-content:space-between;font:12.5px var(--mono);margin-bottom:6px}
+  .ctl .v{color:var(--accent)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:var(--grid);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--accent);border:2px solid var(--ink);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:var(--accent);border:2px solid var(--ink);cursor:pointer}
+  input[type=text],input[type=password]{width:100%;font:13px var(--mono);background:var(--panel-2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+  button{font:600 13px var(--sans);background:var(--accent);color:#06202e;border:0;border-radius:6px;padding:9px 14px;cursor:pointer}
+  button.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}
+  .metric{background:var(--panel-2);border:1px solid var(--grid);border-radius:6px;padding:9px 11px}
+  .metric .k{font:10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .metric .v{font:18px var(--mono);margin-top:2px}
+  .metric.bad .v{color:var(--wall)} .metric.good .v{color:var(--teal)}
+  .verdict{font:13px var(--mono);padding:10px 12px;border-radius:6px;border:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+  .verdict.ok{border-color:rgba(18,184,134,.5);background:rgba(18,184,134,.08)} .verdict.trip{border-color:rgba(255,93,115,.5);background:rgba(255,93,115,.09)}
+  .verdict.ok .tag{color:var(--teal)} .verdict.trip .tag{color:var(--wall)} .tag{font-weight:700}
+  table{border-collapse:collapse;width:100%;font:12.5px var(--mono)}
+  th,td{padding:6px 8px;border-bottom:1px solid var(--grid);text-align:right} th{color:var(--muted);font-weight:500} td:first-child,th:first-child{text-align:left}
+  .scroll{overflow-x:auto}
+  .pill{display:inline-block;font:11.5px var(--mono);padding:3px 10px;border-radius:999px;border:1px solid var(--line)}
+  .pill.done{color:var(--teal);border-color:var(--teal)} .pill.prog{color:var(--amber);border-color:var(--amber)} .pill.none{color:var(--muted)}
+  pre{background:var(--panel-2);border:1px solid var(--grid);border-radius:6px;padding:10px;font:12px/1.5 var(--mono);color:var(--muted);overflow:auto;max-height:200px;margin:10px 0 0;white-space:pre-wrap}
+  .err{color:var(--wall);font:12.5px var(--mono);margin:8px 0}
+  .legend{display:flex;gap:16px;font:12px var(--mono);color:var(--muted);margin:8px 0;flex-wrap:wrap}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+  .limits{border-left:4px solid var(--amber)}
+  .limits ul{margin:6px 0 0;padding-left:20px;color:var(--muted);font-size:13.5px}
+  a{color:var(--accent)}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Project MIZAN</p>
+    <h1>Lab: the whole process, live</h1>
+    <p class="lede">Five stages, from the core hypothesis to a real model to verification. Everything on this page is computed by the running service or read from files it produced. Nothing is mocked.</p>
+  </header>
+  <div class="banner"><b>Read first.</b> This is a concept demonstration. It tests whether a hard constraint holds under optimisation pressure. It does not show that any model is safe, the gate is uncalibrated, and its telemetry is synthetic.</div>
+
+  <div class="ctl" id="keyRow" hidden>
+    <label for="apiKey"><span>API key required</span></label>
+    <input type="password" id="apiKey" autocomplete="off" placeholder="X-API-Key">
+  </div>
+
+  <nav aria-label="Stages">
+    <a href="#s1"><b>1</b>The wall</a><a href="#s2"><b>2</b>The gate</a><a href="#s3"><b>3</b>Benchmark</a><a href="#s4"><b>4</b>Real model</a><a href="#s5"><b>5</b>Verification</a>
+  </nav>
+
+  <!-- 1 -->
+  <section class="card" id="s1">
+    <p class="step">Stage 1 &middot; hypothesis</p>
+    <h2>A hard wall versus a soft penalty</h2>
+    <p class="note">A task pulls a parameter toward a target outside the safe circle. The soft penalty adds a fixed cost for leaving it. The barrier keeps every step inside. Raise the optimisation pressure and watch where each lands.</p>
+    <div class="grid2">
+      <div><svg id="geo" viewBox="-4.5 -4.5 9 9" role="img" aria-label="Safe circle, target, and where each method ends up"></svg>
+        <div class="legend"><span><i style="background:var(--wall)"></i>soft penalty</span><span><i style="background:var(--teal)"></i>hard barrier</span><span><i style="background:var(--muted)"></i>task target</span></div></div>
+      <div>
+        <div class="ctl"><label for="wP">optimisation pressure w <span class="v" id="wPv"></span></label><input type="range" id="wP" min="0" max="12" value="4"></div>
+        <div class="ctl"><label for="lam">penalty weight &lambda; <span class="v" id="lamv"></span></label><input type="range" id="lam" min="-1" max="5" step="0.25" value="2"></div>
+        <div class="ctl"><label for="dim">dimension <span class="v" id="dimv"></span></label><input type="range" id="dim" min="2" max="64" value="8"></div>
+        <div style="display:flex;gap:8px;margin-top:14px"><button id="newProb" class="ghost">New random problem</button></div>
+        <div class="metrics">
+          <div class="metric" id="mPen"><div class="k">penalty overshoot</div><div class="v">-</div></div>
+          <div class="metric" id="mBar"><div class="k">barrier overshoot</div><div class="v">-</div></div>
+          <div class="metric"><div class="k">barrier distance to wall h</div><div class="v" id="mH">-</div></div>
+          <div class="metric"><div class="k">overshoot unit</div><div class="v" style="font-size:13px">radius of safe circle</div></div>
+        </div>
+        <div class="err" id="e1"></div>
+      </div>
+    </div>
+    <svg id="wallChart" viewBox="0 0 640 260" role="img" aria-label="Overshoot versus pressure" style="margin-top:14px"></svg>
+  </section>
+
+  <!-- 2 -->
+  <section class="card" id="s2">
+    <p class="step">Stage 2 &middot; monitor</p>
+    <h2>The safety gate</h2>
+    <p class="note">The service reads a state matrix, computes an alignment value, spread, entropy and a Monte Carlo robustness estimate, and combines them into a margin. The input here is deterministic synthetic telemetry seeded from the text, so the text itself is not analysed.</p>
+    <div class="grid2">
+      <div>
+        <div class="ctl"><label for="ctx">synthetic input (seed text)</label><input type="text" id="ctx" value="sample-input-A" maxlength="200"></div>
+        <div class="ctl"><label for="beta">beta <span class="v" id="betav"></span></label><input type="range" id="beta" min="0" max="2" step="0.01" value="0.85"></div>
+        <div class="ctl"><label for="tau">tau (margin floor) <span class="v" id="tauv"></span></label><input type="range" id="tau" min="0" max="1" step="0.01" value="0.40"></div>
+        <div class="ctl"><label for="dw">doubt weight <span class="v" id="dwv"></span></label><input type="range" id="dw" min="0" max="2" step="0.01" value="0.60"></div>
+      </div>
+      <div>
+        <div class="metrics" id="gateM"></div>
+        <div class="verdict ok" id="gateV"><span>margin = <span id="gMargin">-</span></span><span class="tag" id="gTag">-</span></div>
+        <div class="err" id="e2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="card" id="s3">
+    <p class="step">Stage 3 &middot; measurement</p>
+    <h2>Benchmark</h2>
+    <p class="note">Fixed-seed experiments from <code>python -m mizan.benchmark</code>: 30 random problems across 6 pressure levels, the gate's response to a controlled shift, and cost. <a href="/report" target="_blank" rel="noopener">Open the full report</a>.</p>
+    <div id="benchKpi" class="metrics" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))"></div>
+    <svg id="gateChart" viewBox="0 0 640 260" role="img" aria-label="Gate trip rate versus unaligned variance"></svg>
+    <div class="err" id="e3"></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="card" id="s4">
+    <p class="step">Stage 4 &middot; real model</p>
+    <h2>Phase 1: Pythia-160M</h2>
+    <p class="note">Same question on a real 160M-parameter model: only the final LayerNorm (1,536 numbers) is trained to lower loss on a fixed style, while a KL trust region around the original behaviour is the constraint. The pass/fail criteria were written before any results.</p>
+    <div id="p1Status"></div>
+    <div id="p1Body"></div>
+    <div class="err" id="e4"></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="card" id="s5">
+    <p class="step">Stage 5 &middot; verification</p>
+    <h2>Test suite</h2>
+    <p class="note">Runs the full pytest suite on the machine hosting this service. Disabled on shared deployments.</p>
+    <button id="runTests" disabled>Run tests</button>
+    <div id="testOut"></div>
+    <div class="err" id="e5"></div>
+  </section>
+
+  <section class="card limits">
+    <h2>What this does not show</h2>
+    <ul>
+      <li>The wall experiment is a convex toy problem. It supports a claim about optimisation, not about real model behaviour.</li>
+      <li>The gate is uncalibrated and reads synthetic data. Its trips are not detections.</li>
+      <li>The real-model run is one model, one small parameter slice and one synthetic constraint. The constraint is a trust region, not an ethical principle.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+let KEY = "";
+
+function el(tag, attrs, text){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(text!=null) e.textContent=text; return e; }
+function clear(n){ while(n.firstChild) n.removeChild(n.firstChild); }
+function div(cls, text){ const d=document.createElement("div"); if(cls) d.className=cls; if(text!=null) d.textContent=text; return d; }
+function fmt(v, d=3){ if(v==null||!isFinite(v)) return "-"; const a=Math.abs(v); return (a!==0&&(a<1e-3||a>=1e5))? v.toExponential(1) : v.toFixed(d); }
+
+async function api(path, opts={}){
+  const headers = Object.assign({"Content-Type":"application/json"}, KEY ? {"X-API-Key":KEY} : {});
+  const r = await fetch(path, Object.assign({headers}, opts));
+  if(r.status===401){ $("keyRow").hidden=false; throw new Error("API key required: enter it above"); }
+  if(!r.ok){ let m=r.statusText; try{ const j=await r.json(); m=typeof j.detail==="string"?j.detail:JSON.stringify(j.detail);}catch(e){} throw new Error(m); }
+  return r.json();
+}
+const debounce=(f,ms)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>f(...a),ms); }; };
+
+/* ---------- generic line chart ---------- */
+function lineChart(svg, xlabels, series, ymax, ylabel){
+  clear(svg); const W=640,H=260,L=52,R=28,T=22,B=38, pw=W-L-R, ph=H-T-B;
+  const x=i=>L+pw*i/Math.max(1,xlabels.length-1), y=v=>T+ph*(1-Math.min(v,ymax)/ymax);
+  for(let k=0;k<=4;k++){ const v=ymax*k/4; svg.append(el("line",{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:"#1c3a5a"}), el("text",{x:L-6,y:y(v)+4,fill:"#8296ab","font-size":10,"text-anchor":"end"},fmt(v,2))); }
+  xlabels.forEach((s,i)=>svg.append(el("text",{x:x(i),y:H-18,fill:"#8296ab","font-size":10,"text-anchor":"middle"},s)));
+  if(ylabel) svg.append(el("text",{x:12,y:T+ph/2,fill:"#8296ab","font-size":10,"text-anchor":"middle",transform:`rotate(-90 12 ${T+ph/2})`},ylabel));
+  series.forEach(s=>{ svg.append(el("polyline",{points:s.ys.map((v,i)=>`${x(i)},${y(v)}`).join(" "),fill:"none",stroke:s.color,"stroke-width":2.5}));
+    s.ys.forEach((v,i)=>svg.append(el("circle",{cx:x(i),cy:y(v),r:3.2,fill:s.color}))); });
+  return {x,y};
+}
+
+/* ---------- stage 1 ---------- */
+let wallData=null, seed=1;
+const pw = k => Math.pow(10, k/2);
+function drawGeometry(){
+  if(!wallData) return;
+  const k=+$("wP").value, p=wallData.points[k], a=wallData.angle, R=wallData.target_radius, svg=$("geo");
+  clear(svg);
+  const P=(r)=>[r*Math.cos(a), -r*Math.sin(a)];
+  for(let g=-4;g<=4;g++){ svg.append(el("line",{x1:g,x2:g,y1:-4.5,y2:4.5,stroke:"#1c3a5a","stroke-width":.03}), el("line",{y1:g,y2:g,x1:-4.5,x2:4.5,stroke:"#1c3a5a","stroke-width":.03})); }
+  svg.append(el("circle",{cx:0,cy:0,r:1,fill:"rgba(18,184,134,.14)",stroke:"#ff5d73","stroke-width":.07}));
+  svg.append(el("text",{x:-0.9,y:-1.2,fill:"#ff5d73","font-size":.32},"hard wall"));
+  const [tx,ty]=P(R); svg.append(el("line",{x1:0,y1:0,x2:tx,y2:ty,stroke:"#8296ab","stroke-width":.03,"stroke-dasharray":".12 .12"}));
+  svg.append(el("circle",{cx:tx,cy:ty,r:.14,fill:"#8296ab"}), el("text",{x:tx+.2,y:ty-.2,fill:"#8296ab","font-size":.3},"task target"));
+  const [bx,by]=P(p.barrier_radius), [px,py]=P(p.penalty_radius);
+  svg.append(el("circle",{cx:bx,cy:by,r:.2,fill:"#12b886",stroke:"#fff","stroke-width":.05}));
+  svg.append(el("circle",{cx:px,cy:py,r:.2,fill:"#ff5d73",stroke:"#fff","stroke-width":.05}));
+  $("wPv").textContent = pw(k)>=1e4 ? pw(k).toExponential(0) : Math.round(pw(k)).toString();
+  const mp=$("mPen"), mb=$("mBar");
+  mp.querySelector(".v").textContent=fmt(p.penalty_violation); mp.className="metric "+(p.penalty_violation>1e-3?"bad":"good");
+  mb.querySelector(".v").textContent=fmt(p.barrier_violation); mb.className="metric "+(p.barrier_violation>0?"bad":"good");
+  $("mH").textContent=fmt(p.barrier_min_h);
+}
+function drawWallChart(){
+  if(!wallData) return;
+  const pts=wallData.points, ymax=Math.max(0.5, ...pts.map(p=>p.penalty_violation))*1.1;
+  lineChart($("wallChart"), pts.map(p=>p.w>=1e4?p.w.toExponential(0):String(Math.round(p.w))),
+    [{color:"#ff5d73",ys:pts.map(p=>p.penalty_violation)},{color:"#12b886",ys:pts.map(p=>p.barrier_violation)}], ymax, "overshoot");
+}
+async function loadWall(){
+  $("lamv").textContent = Math.round(Math.pow(10,+$("lam").value)*100)/100; $("dimv").textContent=$("dim").value;
+  try{ wallData = await api(`/v1/lab/wall?dim=${$("dim").value}&seed=${seed}&penalty_lambda=${Math.pow(10,+$("lam").value)}`); $("e1").textContent=""; drawGeometry(); drawWallChart(); }
+  catch(e){ $("e1").textContent=e.message; }
+}
+const loadWallD=debounce(loadWall,250);
+$("wP").addEventListener("input",drawGeometry);
+$("lam").addEventListener("input",loadWallD); $("dim").addEventListener("input",loadWallD);
+$("newProb").addEventListener("click",()=>{ seed=Math.floor(Math.random()*1e6); loadWall(); });
+
+/* ---------- stage 2 ---------- */
+async function runGate(){
+  $("betav").textContent=(+$("beta").value).toFixed(2); $("tauv").textContent=(+$("tau").value).toFixed(2); $("dwv").textContent=(+$("dw").value).toFixed(2);
+  const ctx=$("ctx").value.trim()||"x";
+  try{
+    const r=await api("/v1/evaluate/synthetic",{method:"POST",body:JSON.stringify({context:ctx,params:{beta:+$("beta").value,tau:+$("tau").value,doubt_weight:+$("dw").value,trials:300}})});
+    const box=$("gateM"); clear(box);
+    [["alignment mu",r.alignment_mu],["spread sigma",r.variance_sigma],["entropy",r.entropy],["robustness risk",r.robustness_risk]].forEach(([k,v])=>{ const m=div("metric"); m.append(div("k",k), div("v",fmt(v,4))); box.append(m); });
+    $("gMargin").textContent=fmt(r.margin,4); const v=$("gateV"); v.className="verdict "+(r.gate_tripped?"trip":"ok"); $("gTag").textContent=r.gate_tripped?"TRIP":"PASS"; $("e2").textContent="";
+  }catch(e){ $("e2").textContent=e.message; }
+}
+const runGateD=debounce(runGate,250);
+["ctx","beta","tau","dw"].forEach(id=>$(id).addEventListener("input",runGateD));
+
+/* ---------- stage 3 ---------- */
+async function loadBench(){
+  try{
+    const b=await api("/v1/lab/benchmark"), box=$("benchKpi"); clear(box);
+    const last=b.wall.rows[b.wall.rows.length-1];
+    [[String(Math.max(...b.wall.rows.map(r=>r.barrier_violation_max))),`barrier violations over ${b.wall.n_problems} problems x ${b.wall.rows.length} pressures`],
+     [fmt(last.penalty_violation_median,2),`median penalty overshoot at pressure ${last.pressure_w.toLocaleString()}`],
+     [fmt(b.latency.p50_ms,1)+" ms",`median gate evaluation (${b.meta.mode} run)`]].forEach(([v,k])=>{ const m=div("metric"); m.append(div("v",v), div("k",k)); box.append(m); });
+    lineChart($("gateChart"), b.gate.rows.map(r=>String(r.unaligned_variance_m)), [{color:"#56ccf2",ys:b.gate.rows.map(r=>r.trip_rate)}], 1, "gate trip rate");
+    $("e3").textContent="";
+  }catch(e){ $("e3").textContent=e.message; }
+}
+
+/* ---------- stage 4 ---------- */
+async function loadP1(){
+  const st=$("p1Status"), body=$("p1Body"); clear(st); clear(body);
+  try{
+    const r=await api("/v1/lab/phase1"); $("e4").textContent="";
+    const pill=document.createElement("span"); pill.className="pill";
+    pill.textContent={done:"complete",in_progress:"full run in progress",quick_only:"smoke test only",absent:"not run yet"}[r.status]||r.status;
+    pill.classList.add(r.status==="done"?"done":r.status==="in_progress"?"prog":"none"); st.append(pill);
+    if(r.status!=="done" && r.data){ st.append(div("note","Showing the 20-iteration smoke test. Its penalty runs are unconverged, so the comparison is not meaningful.")); }
+    if(r.data){
+      const d=r.data, m=d.meta||{}, rows=d.rows||[];
+      const info=div("note", `${m.model||""} | ${m.dtype||""} | eps = ${fmt(m.eps,3)} nats (${m.eps_frac}x the unconstrained KL ${fmt(m.free_kl,2)}) | reference NLL ${fmt(m.reference_nll,3)}, unconstrained NLL ${fmt(m.free_nll,3)}`);
+      info.style.marginTop="10px"; body.append(info);
+      const svg=el("svg",{viewBox:"0 0 640 260",role:"img","aria-label":"KL divergence against the trust region"}); body.append(svg);
+      const ws=[...new Set(rows.map(x=>x.pressure_w))].sort((a,b)=>a-b);
+      const kl=(meth,w)=>{ const x=rows.find(z=>z.method===meth&&z.pressure_w===w); return x?x.kl:0; };
+      const ymax=Math.max(m.eps*1.4, ...rows.map(x=>x.kl))*1.05;
+      const c=lineChart(svg, ws.map(w=>String(w)), [{color:"#ff5d73",ys:ws.map(w=>kl("penalty",w))},{color:"#12b886",ys:ws.map(w=>kl("barrier",w))}], ymax, "KL (nats)");
+      svg.append(el("line",{x1:52,x2:612,y1:c.y(m.eps),y2:c.y(m.eps),stroke:"#ffc14d","stroke-dasharray":"5 4","stroke-width":1.5}), el("text",{x:58,y:c.y(m.eps)-5,fill:"#ffc14d","font-size":10},"constraint limit eps (above = violated)"));
+      const wrap=div("scroll"), tb=document.createElement("table"); wrap.style.marginTop="12px";
+      const hr=tb.insertRow(); ["method","pressure","task NLL","KL","violation","min h","iters"].forEach(h=>{ const th=document.createElement("th"); th.textContent=h; hr.append(th); });
+      rows.forEach(x=>{ const tr=tb.insertRow(); [x.method,x.pressure_w,fmt(x.task_nll,4),fmt(x.kl,4),fmt(x.violation,4),x.min_h==null?"-":fmt(x.min_h,4),x.iters].forEach(v=>{ tr.insertCell().textContent=v; }); });
+      wrap.append(tb); body.append(wrap);
+      if(d.full_model_check){ body.append(div("note","Integrity check: final solutions were re-scored on the full model and agree with the cached path.")); }
+    }
+    if(r.log_tail){ const pre=document.createElement("pre"); pre.textContent=`run log (updated ${r.log_age_s}s ago)\n`+r.log_tail; body.append(pre); }
+    if(r.status==="in_progress") setTimeout(loadP1, 20000);
+  }catch(e){ $("e4").textContent=e.message; }
+}
+
+/* ---------- stage 5 ---------- */
+async function initTests(){
+  try{ const c=await api("/v1/lab/capabilities"); $("runTests").disabled=!c.run_tests; if(!c.run_tests) $("runTests").title="Disabled: set MIZAN_LAB_ALLOW_RUN=1 on the server"; }catch(e){}
+}
+$("runTests").addEventListener("click", async ()=>{
+  const b=$("runTests"), out=$("testOut"); b.disabled=true; b.textContent="Running..."; clear(out); $("e5").textContent="";
+  try{ const r=await api("/v1/lab/tests",{method:"POST"});
+    const v=div("verdict "+(r.ok?"ok":"trip")); const s=document.createElement("span"); s.textContent=r.summary; const t=document.createElement("span"); t.className="tag"; t.textContent=(r.ok?"PASS":"FAIL")+` (${r.seconds}s)`; v.append(s,t); v.style.marginTop="12px"; out.append(v);
+    const pre=document.createElement("pre"); pre.textContent=r.tail; out.append(pre);
+  }catch(e){ $("e5").textContent=e.message; }
+  b.disabled=false; b.textContent="Run tests";
+});
+
+/* ---------- boot ---------- */
+$("apiKey").addEventListener("change",()=>{ KEY=$("apiKey").value; boot(); });
+function boot(){ loadWall(); runGate(); loadBench(); loadP1(); initTests(); }
+boot();
+</script>
+</body>
+</html>

@@ -72,6 +72,18 @@ def test_benchmark_quick_and_report(tmp_path, client):
     assert "What this does not show" in (tmp_path / "report.html").read_text(encoding="utf-8")
 
 
+def test_lab_page_and_endpoints(client, monkeypatch):
+    assert "MIZAN Lab" in client.get("/lab").text
+    w = client.get("/v1/lab/wall?dim=3&seed=2").json()
+    assert all(p["barrier_violation"] == 0.0 and p["barrier_min_h"] > 0 for p in w["points"])
+    assert w["points"][-1]["penalty_violation"] > w["points"][0]["penalty_violation"]
+    assert client.get("/v1/lab/wall?dim=1").status_code == 422
+    assert client.get("/v1/lab/phase1").json()["status"] in {"absent", "quick_only", "in_progress", "done"}
+    monkeypatch.delenv("MIZAN_LAB_ALLOW_RUN", raising=False)
+    assert client.get("/v1/lab/capabilities").json() == {"run_tests": False}
+    assert client.post("/v1/lab/tests").status_code == 403
+
+
 def test_dashboard_served(client):
     r = client.get("/")
     assert r.status_code == 200 and "MIZAN" in r.text

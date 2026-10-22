@@ -144,6 +144,91 @@ def barrier_minimise(f, grad_f, hess_f, h, h_prime, theta0: float,
     return trajectory
 
 
+def lbfgs_minimise(phi, grad_phi, x0, feasible=None, max_iter: int = 200,
+                   history: int = 10, gtol: float = 1e-9):
+    """L-BFGS with an Armijo backtracking line search.
+
+    If `feasible` is given, a trial point is accepted only when feasible(x) is
+    True, so every accepted iterate stays strictly inside the region. Returns
+    (x, n_iter). `phi` must be finite on feasible points.
+    """
+    x = np.asarray(x0, dtype=float).copy()
+    g = grad_phi(x)
+    f = phi(x)
+    S, Y = [], []
+    for it in range(max_iter):
+        if np.linalg.norm(g) < gtol:
+            return x, it
+        q = g.copy()
+        alphas = []
+        for s_i, y_i in zip(reversed(S), reversed(Y)):
+            a = float(s_i @ q) / float(y_i @ s_i)
+            alphas.append(a)
+            q -= a * y_i
+        if S:
+            q *= float(S[-1] @ Y[-1]) / float(Y[-1] @ Y[-1])
+        for (s_i, y_i), a in zip(zip(S, Y), reversed(alphas)):
+            b = float(y_i @ q) / float(y_i @ s_i)
+            q += s_i * (a - b)
+        d = -q
+        slope = float(g @ d)
+        if slope >= 0:  # not a descent direction: restart with steepest descent
+            S, Y = [], []
+            d, slope = -g, -float(g @ g)
+        step = 1.0 if S else min(1.0, 1.0 / max(np.linalg.norm(g), 1e-12))
+        accepted = False
+        while step > 1e-16:
+            xn = x + step * d
+            if feasible is None or feasible(xn):
+                fn = phi(xn)
+                if np.isfinite(fn) and fn <= f + 1e-4 * step * slope:
+                    accepted = True
+                    break
+            step *= 0.5
+        if not accepted:
+            return x, it
+        gn = grad_phi(xn)
+        s_k, y_k = xn - x, gn - g
+        if float(s_k @ y_k) > 1e-12:
+            S.append(s_k)
+            Y.append(y_k)
+            if len(S) > history:
+                S.pop(0)
+                Y.pop(0)
+        x, g, f = xn, gn, fn
+    return x, max_iter
+
+
+def barrier_minimise_nd(f, grad_f, h, grad_h, theta0, t_schedule=(1.0, 10.0, 100.0, 1000.0),
+                        max_iter: int = 200):
+    """Minimise f(theta) s.t. h(theta) >= 0 in R^n with a log barrier.
+
+    phi_t = f - (1/t) log h, minimised with L-BFGS whose line search rejects
+    any trial point with h <= 0. Returns a dict with the final theta, the
+    smallest h over every accepted iterate, and a per-t trajectory.
+    """
+    if any(t <= 0 for t in t_schedule):
+        raise ValueError("every barrier strength t must be > 0")
+    theta = np.asarray(theta0, dtype=float).copy()
+    if h(theta) <= 0:
+        raise ValueError("theta0 must be strictly feasible (h(theta0) > 0)")
+    min_h = h(theta)
+    trajectory = []
+    for t in t_schedule:
+        def phi(x, t=t):
+            return f(x) - math.log(h(x)) / t
+
+        def grad_phi(x, t=t):
+            return grad_f(x) - grad_h(x) / (t * h(x))
+
+        theta, n_iter = lbfgs_minimise(phi, grad_phi, theta, feasible=lambda x: h(x) > 1e-300,
+                                       max_iter=max_iter)
+        hv = h(theta)
+        min_h = min(min_h, hv)
+        trajectory.append({"t": t, "f": f(theta), "h": hv, "iters": n_iter})
+    return {"theta": theta, "min_h": min_h, "trajectory": trajectory}
+
+
 def wall_demo(t_schedule=(1.0, 10.0, 100.0, 1000.0), target: float = 5.0, wall: float = 3.0):
     """The README demo problem: pull toward `target`, hard wall at `wall`."""
     return barrier_minimise(

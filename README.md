@@ -92,6 +92,12 @@ The current gate trips on both synthetic inputs under the placeholder parameters
 
 `results/report.html` is a self-contained page (also served at `/report`) with three computed experiments: a hard barrier against a soft penalty under rising optimisation pressure, the gate's response to a controlled shift, and latency. The report states what it does not show. Experiment 2 uses data labelled by construction, so it is not a detection rate.
 
+### The Lab UI
+
+    MIZAN_LAB_ALLOW_RUN=1 uvicorn mizan.api:app --port 8000     # then open http://localhost:8000/lab
+
+One page that walks through the whole process: the wall (live barrier vs soft penalty with sliders), the gate, the benchmark, the real-model Phase 1 run (finished, in progress, or smoke-test only, with the run log), and a button that runs the test suite. `MIZAN_LAB_ALLOW_RUN=1` enables that button and should only be set on a machine you control.
+
 ### Running it as a service
 
     pip install -e ".[dev]"
