@@ -270,6 +270,8 @@ async function loadP1(){
     const pill=document.createElement("span"); pill.className="pill";
     pill.textContent={done:"complete",in_progress:"full run in progress",quick_only:"smoke test only",absent:"not run yet"}[r.status]||r.status;
     pill.classList.add(r.status==="done"?"done":r.status==="in_progress"?"prog":"none"); st.append(pill);
+    if(r.verdict){ const v=div("verdict "+(r.verdict.verdict==="PASS"?"ok":"trip"));
+      const s=document.createElement("span"); s.textContent="Pre-registered verdict: "+r.verdict.reason+"."; const t=document.createElement("span"); t.className="tag"; t.textContent=r.verdict.verdict; v.append(s,t); v.style.marginTop="10px"; st.append(v); }
     if(r.status!=="done" && r.data){ st.append(div("note","Showing the 20-iteration smoke test. Its penalty runs are unconverged, so the comparison is not meaningful.")); }
     if(r.data){
       const d=r.data, m=d.meta||{}, rows=d.rows||[];

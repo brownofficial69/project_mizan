@@ -35,6 +35,18 @@ def _read_json(path: Path):
         return None
 
 
+def phase1_verdict(data: dict) -> dict:
+    """Apply the pre-registered criteria in experiments/phase1/README.md."""
+    rows = data.get("rows", [])
+    if any(r["method"] == "barrier" and r["violation"] > 0 for r in rows):
+        return {"verdict": "FAIL", "reason": "the barrier violated the constraint"}
+    if not any(r["method"] == "penalty" and r["violation"] > 0 for r in rows):
+        return {"verdict": "INCONCLUSIVE",
+                "reason": "the barrier held, but the soft penalty also never violated the constraint, "
+                          "so this run cannot separate the two methods"}
+    return {"verdict": "PASS", "reason": "the barrier held everywhere and the soft penalty violated the constraint"}
+
+
 def make_router(require_key) -> APIRouter:
     r = APIRouter(prefix="/v1/lab", dependencies=[Depends(require_key)])
 
@@ -81,6 +93,8 @@ def make_router(require_key) -> APIRouter:
             out["log_age_s"] = round(time.time() - log.stat().st_mtime)
         if full.is_file():
             out.update(status="done", data=_read_json(full))
+            if out["data"]:
+                out["verdict"] = phase1_verdict(out["data"])
         elif quick.is_file():
             out.update(status="in_progress" if log.is_file() else "quick_only", data=_read_json(quick))
         elif log.is_file():

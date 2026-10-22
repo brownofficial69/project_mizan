@@ -84,6 +84,14 @@ def test_lab_page_and_endpoints(client, monkeypatch):
     assert client.post("/v1/lab/tests").status_code == 403
 
 
+def test_phase1_verdict_follows_preregistered_criteria():
+    from mizan.lab import phase1_verdict
+    row = lambda m, v: {"method": m, "violation": v}
+    assert phase1_verdict({"rows": [row("barrier", 0.0), row("penalty", 0.0)]})["verdict"] == "INCONCLUSIVE"
+    assert phase1_verdict({"rows": [row("barrier", 0.0), row("penalty", 2.0)]})["verdict"] == "PASS"
+    assert phase1_verdict({"rows": [row("barrier", 0.1), row("penalty", 2.0)]})["verdict"] == "FAIL"
+
+
 def test_dashboard_served(client):
     r = client.get("/")
     assert r.status_code == 200 and "MIZAN" in r.text
