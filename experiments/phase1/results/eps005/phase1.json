@@ -1,0 +1,116 @@
+{
+  "meta": {
+    "d": 768,
+    "n_task_tokens": 102,
+    "n_ref_tokens": 147,
+    "model": "EleutherAI/pythia-160m",
+    "dtype": "float64",
+    "eps": 93.51267742260548,
+    "eps_frac": 0.05,
+    "penalty_lambda": 100.0,
+    "t_schedule": [
+      1.0,
+      10.0,
+      100.0
+    ],
+    "max_iter": 150,
+    "reference_nll": 5.878478616594757,
+    "free_nll": 0.0543645542760886,
+    "free_kl": 1870.2535484521095,
+    "quick": false
+  },
+  "rows": [
+    {
+      "method": "penalty",
+      "pressure_w": 1,
+      "task_nll": 0.057629694093798325,
+      "kl": 93.51268370763113,
+      "violation": 6.285025648367082e-06,
+      "min_h": null,
+      "iters": 450,
+      "seconds": 516.6
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 1,
+      "task_nll": 0.0557095361282709,
+      "kl": 15.191515031563686,
+      "violation": 0.0,
+      "min_h": 78.3211623910418,
+      "iters": 450,
+      "seconds": 270.9
+    },
+    {
+      "method": "penalty",
+      "pressure_w": 10,
+      "task_nll": 0.0545158827814967,
+      "kl": 93.51318491889322,
+      "violation": 0.0005074962877387179,
+      "min_h": null,
+      "iters": 450,
+      "seconds": 362.9
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 10,
+      "task_nll": 0.05516129104683913,
+      "kl": 32.97798342411039,
+      "violation": 0.0,
+      "min_h": 60.53469399849509,
+      "iters": 450,
+      "seconds": 320.3
+    },
+    {
+      "method": "penalty",
+      "pressure_w": 100,
+      "task_nll": 0.054413405913592505,
+      "kl": 93.51251674842833,
+      "violation": 0.0,
+      "min_h": null,
+      "iters": 450,
+      "seconds": 365.2
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 100,
+      "task_nll": 0.054704379175653316,
+      "kl": 56.31403994248415,
+      "violation": 0.0,
+      "min_h": 37.19863748012133,
+      "iters": 450,
+      "seconds": 479.3
+    },
+    {
+      "method": "penalty",
+      "pressure_w": 1000,
+      "task_nll": 0.05441234784170006,
+      "kl": 93.51270505603962,
+      "violation": 2.7633434143581326e-05,
+      "min_h": null,
+      "iters": 450,
+      "seconds": 385.9
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 1000,
+      "task_nll": 0.05475871373688587,
+      "kl": 80.9022572296743,
+      "violation": 0.0,
+      "min_h": 12.610420192931173,
+      "iters": 450,
+      "seconds": 370.6
+    }
+  ],
+  "full_model_check": {
+    "penalty": {
+      "full_model_nll": 0.05441234598105568,
+      "full_model_kl": 93.51273681262506,
+      "violation": 5.939001958665813e-05
+    },
+    "barrier": {
+      "full_model_nll": 0.05475869157351436,
+      "full_model_kl": 80.90225299925493,
+      "violation": 0.0
+    }
+  }
+}

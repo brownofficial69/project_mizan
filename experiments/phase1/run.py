@@ -60,12 +60,13 @@ REF_TEXTS = [
 ]
 
 
-def build_problem(model_name: str, dtype: str):
+def build_problem(model_name: str, dtype: str, device: str = "cpu"):
     import torch
     import torch.nn.functional as F
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     tdtype = torch.float64 if dtype == "float64" else torch.float32
+    dev = torch.device(device)
     tok = AutoTokenizer.from_pretrained(model_name)
     tok.pad_token = tok.eos_token
     tok.padding_side = "right"
@@ -92,7 +93,11 @@ def build_problem(model_name: str, dtype: str):
     hook.remove()
     ref_logp = F.log_softmax(ref_logits, dim=-1)
     ref_p = ref_logp.exp()
-    W_U = model.get_output_embeddings().weight.detach().to(tdtype)
+    # the full-model integrity check always runs on CPU; the cached objective may run on `dev`
+    ref_p_c, ref_logp_c = ref_p, ref_logp
+    H_task, tgt_task, H_ref = H_task.to(dev), tgt_task.to(dev), H_ref.to(dev)
+    ref_p, ref_logp = ref_p.to(dev), ref_logp.to(dev)
+    W_U = model.get_output_embeddings().weight.detach().to(tdtype).to(dev)
     ln_eps = ln.eps
     x_ref = torch.cat([ln.weight.detach(), ln.bias.detach()]).double().numpy()
 
@@ -102,7 +107,7 @@ def build_problem(model_name: str, dtype: str):
         key = x.tobytes()
         if cache["key"] == key:
             return cache["val"]
-        xt = torch.tensor(x, dtype=tdtype)
+        xt = torch.tensor(x, dtype=tdtype, device=dev)
         w = xt[:d].clone().requires_grad_(True)
         b = xt[d:].clone().requires_grad_(True)
         logp = F.log_softmax(F.layer_norm(H_task, (d,), w, b, ln_eps) @ W_U.T, dim=-1)
@@ -112,7 +117,7 @@ def build_problem(model_name: str, dtype: str):
         gL = torch.autograd.grad(L, (w, b), retain_graph=True)
         gK = torch.autograd.grad(KL, (w, b))
         val = (float(L), float(KL),
-               torch.cat(gL).double().numpy(), torch.cat(gK).double().numpy())
+               torch.cat(gL).double().cpu().numpy(), torch.cat(gK).double().cpu().numpy())
         cache["key"], cache["val"] = key, val
         return val
 
@@ -127,7 +132,7 @@ def build_problem(model_name: str, dtype: str):
             lp_t = F.log_softmax(lt[mt], dim=-1)
             nll = float(-lp_t.gather(1, enc_t["input_ids"][:, 1:][mt][:, None]).mean())
             lq = F.log_softmax(lr[mask_r], dim=-1)
-            kl = float((ref_p.double() * (ref_logp.double() - lq)).sum(-1).mean())
+            kl = float((ref_p_c.double() * (ref_logp_c.double() - lq)).sum(-1).mean())
             ln.weight.copy_(torch.tensor(x_ref[:d], dtype=ln.weight.dtype))
             ln.bias.copy_(torch.tensor(x_ref[d:], dtype=ln.bias.dtype))
         return nll, kl
@@ -140,6 +145,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="EleutherAI/pythia-160m")
     ap.add_argument("--dtype", default="float64", choices=["float32", "float64"])
+    ap.add_argument("--device", default="cpu", choices=["cpu", "cuda", "auto"],
+                    help="where the cached objective runs (float64 is slow on consumer GPUs)")
     ap.add_argument("--pressures", type=float, nargs="+", default=[1, 10, 100, 1000])
     ap.add_argument("--eps-frac", type=float, default=0.25)
     ap.add_argument("--penalty-lambda", type=float, default=100.0)
@@ -151,7 +158,12 @@ def main():
     if args.quick:
         args.pressures, args.max_iter, args.t_schedule = [1, 100], 20, [1.0, 10.0]
 
-    evaluate, full_model_kl, x_ref, info = build_problem(args.model, args.dtype)
+    device = args.device
+    if device == "auto":
+        import torch
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    print("device:", device)
+    evaluate, full_model_kl, x_ref, info = build_problem(args.model, args.dtype, device)
     nll0, kl0 = evaluate(x_ref)[:2]
     nll_chk, kl_chk = full_model_kl(x_ref)
     print(f"reference: nll={nll0:.4f} kl={kl0:.2e}  (full-model check nll={nll_chk:.4f} kl={kl_chk:.2e})")
@@ -205,7 +217,7 @@ def main():
     payload = {"meta": {**info, "model": args.model, "dtype": args.dtype, "eps": eps,
                         "eps_frac": args.eps_frac, "penalty_lambda": args.penalty_lambda,
                         "t_schedule": args.t_schedule, "max_iter": args.max_iter,
-                        "reference_nll": nll0, "free_nll": nll_free, "free_kl": kl_free,
+                        "device": device, "reference_nll": nll0, "free_nll": nll_free, "free_kl": kl_free,
                         "quick": args.quick},
                "rows": rows, "full_model_check": checks}
     (out / ("phase1_quick.json" if args.quick else "phase1.json")).write_text(json.dumps(payload, indent=2))
