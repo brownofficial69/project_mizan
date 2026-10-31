@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "d": 768,
+    "n_task_tokens": 102,
+    "n_ref_tokens": 147,
+    "model": "EleutherAI/pythia-160m",
+    "dtype": "float64",
+    "eps": 1.8049506279058662,
+    "eps_frac": 0.25,
+    "penalty_lambda": 100.0,
+    "t_schedule": [
+      1.0,
+      10.0,
+      100.0
+    ],
+    "max_iter": 600,
+    "device": "cuda",
+    "reference_nll": 5.878478616594734,
+    "free_nll": 0.05436450189907228,
+    "free_kl": 1103.3563022619533,
+    "quick": false
+  },
+  "rows": [
+    {
+      "method": "penalty",
+      "pressure_w": 1000.0,
+      "task_nll": 0.10012219906300661,
+      "kl": 2.131330520257047,
+      "violation": 0.3263798923511807,
+      "min_h": null,
+      "iters": 1800,
+      "seconds": 270.0
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 1000.0,
+      "task_nll": 0.13657102087521228,
+      "kl": 1.804785584663042,
+      "violation": 0.0,
+      "min_h": 0.00016504324282418104,
+      "iters": 1800,
+      "seconds": 470.5
+    }
+  ],
+  "full_model_check": {
+    "penalty": {
+      "full_model_nll": 0.10012270551150905,
+      "full_model_kl": 2.131328063929589,
+      "violation": 0.3263774360237228
+    },
+    "barrier": {
+      "full_model_nll": 0.13657204296782832,
+      "full_model_kl": 1.804787003825411,
+      "violation": 0.0
+    }
+  }
+}
