@@ -149,6 +149,8 @@ def main():
                     help="where the cached objective runs (float64 is slow on consumer GPUs)")
     ap.add_argument("--pressures", type=float, nargs="+", default=[1, 10, 100, 1000])
     ap.add_argument("--eps-frac", type=float, default=0.25)
+    ap.add_argument("--eps", type=float, default=None,
+                    help="fixed absolute eps in nats; overrides --eps-frac (the unconstrained solve then only reports)")
     ap.add_argument("--penalty-lambda", type=float, default=100.0)
     ap.add_argument("--t-schedule", type=float, nargs="+", default=[1.0, 10.0, 100.0])
     ap.add_argument("--max-iter", type=int, default=150)
@@ -172,7 +174,7 @@ def main():
     # Unconstrained run fixes eps before any constrained run.
     xf, _ = lbfgs_minimise(lambda x: evaluate(x)[0], lambda x: evaluate(x)[2], x_ref, max_iter=args.max_iter)
     nll_free, kl_free = evaluate(xf)[:2]
-    eps = args.eps_frac * kl_free
+    eps = args.eps if args.eps is not None else args.eps_frac * kl_free
     print(f"unconstrained: nll={nll_free:.4f} kl={kl_free:.4f} -> eps={eps:.5f}")
 
     h = lambda x: eps - evaluate(x)[1]
