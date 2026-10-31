@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "d": 768,
+    "n_task_tokens": 102,
+    "n_ref_tokens": 147,
+    "model": "EleutherAI/pythia-160m",
+    "dtype": "float64",
+    "eps": 1.8049506279058662,
+    "eps_frac": 0.25,
+    "penalty_lambda": 100.0,
+    "t_schedule": [
+      1.0,
+      10.0,
+      100.0
+    ],
+    "max_iter": 600,
+    "device": "cuda",
+    "reference_nll": 5.878478616594734,
+    "free_nll": 0.05436450189907228,
+    "free_kl": 1103.3563022619533,
+    "quick": false
+  },
+  "rows": [
+    {
+      "method": "penalty",
+      "pressure_w": 1.0,
+      "task_nll": 0.12820867226544588,
+      "kl": 1.8054933291783943,
+      "violation": 0.00054270127252809,
+      "min_h": null,
+      "iters": 1800,
+      "seconds": 326.1
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 1.0,
+      "task_nll": 0.1375069867564647,
+      "kl": 1.7262362047507285,
+      "violation": 0.0,
+      "min_h": 0.07871442315513777,
+      "iters": 1800,
+      "seconds": 265.4
+    },
+    {
+      "method": "penalty",
+      "pressure_w": 10.0,
+      "task_nll": 0.12754411109487146,
+      "kl": 1.8104601819634443,
+      "violation": 0.0055095540575780255,
+      "min_h": null,
+      "iters": 1800,
+      "seconds": 271.6
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 10.0,
+      "task_nll": 0.12914758297511061,
+      "kl": 1.796074370608382,
+      "violation": 0.0,
+      "min_h": 0.008876257297484313,
+      "iters": 1800,
+      "seconds": 268.8
+    },
+    {
+      "method": "penalty",
+      "pressure_w": 100.0,
+      "task_nll": 0.12272699505302806,
+      "kl": 1.8559305328624165,
+      "violation": 0.05097990495655025,
+      "min_h": null,
+      "iters": 1800,
+      "seconds": 272.0
+    },
+    {
+      "method": "barrier",
+      "pressure_w": 100.0,
+      "task_nll": 0.128256600566015,
+      "kl": 1.8040551303096586,
+      "violation": 0.0,
+      "min_h": 0.0008954975962076617,
+      "iters": 1800,
+      "seconds": 290.4
+    }
+  ],
+  "full_model_check": {
+    "penalty": {
+      "full_model_nll": 0.12272748959067996,
+      "full_model_kl": 1.8559284607829476,
+      "violation": 0.05097783287708135
+    },
+    "barrier": {
+      "full_model_nll": 0.1282563087547518,
+      "full_model_kl": 1.8040544244231351,
+      "violation": 0.0
+    }
+  }
+}

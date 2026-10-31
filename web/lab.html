@@ -289,6 +289,10 @@ async function loadP1(){
       wrap.append(tb); body.append(wrap);
       if(d.full_model_check){ body.append(div("note","Integrity check: final solutions were re-scored on the full model and agree with the cached path.")); }
     }
+    if(r.runs && r.runs.length){ const rw=div("scroll"), t2=document.createElement("table"); rw.style.marginTop="14px";
+      const h2=t2.insertRow(); ["run file","eps (nats)","device","max iter","verdict"].forEach(h=>{ const th=document.createElement("th"); th.textContent=h; h2.append(th); });
+      r.runs.forEach(x=>{ const tr=t2.insertRow(); [x.name,x.eps==null?"-":fmt(x.eps,3),x.device,x.quick?"quick":x.max_iter,x.verdict.verdict].forEach(v=>{ tr.insertCell().textContent=v; }); tr.title=x.verdict.reason; });
+      rw.append(div("note","All runs, each judged by the pre-registered rules (hover a row for the reason):"), t2); body.append(rw); }
     if(r.log_tail){ const pre=document.createElement("pre"); pre.textContent=`run log (updated ${r.log_age_s}s ago)\n`+r.log_tail; body.append(pre); }
     if(r.status==="in_progress") setTimeout(loadP1, 20000);
   }catch(e){ $("e4").textContent=e.message; }

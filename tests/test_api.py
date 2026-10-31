@@ -86,10 +86,15 @@ def test_lab_page_and_endpoints(client, monkeypatch):
 
 def test_phase1_verdict_follows_preregistered_criteria():
     from mizan.lab import phase1_verdict
-    row = lambda m, v: {"method": m, "violation": v}
-    assert phase1_verdict({"rows": [row("barrier", 0.0), row("penalty", 0.0)]})["verdict"] == "INCONCLUSIVE"
-    assert phase1_verdict({"rows": [row("barrier", 0.0), row("penalty", 2.0)]})["verdict"] == "PASS"
-    assert phase1_verdict({"rows": [row("barrier", 0.1), row("penalty", 2.0)]})["verdict"] == "FAIL"
+    def row(m, v, w=1.0, nll=0.1):
+        return {"method": m, "violation": v, "pressure_w": w, "task_nll": nll}
+    meta = {"meta": {"eps": 100.0}}  # materiality line = 1.0 nat
+    assert phase1_verdict({"rows": [row("barrier", 0.0), row("penalty", 0.0)], **meta})["verdict"] == "INCONCLUSIVE"
+    assert phase1_verdict({"rows": [row("barrier", 0.0), row("penalty", 0.0005)], **meta})["verdict"] == "INCONCLUSIVE"
+    assert phase1_verdict({"rows": [row("barrier", 0.0), row("penalty", 2.0)], **meta})["verdict"] == "PASS"
+    assert phase1_verdict({"rows": [row("barrier", 0.1), row("penalty", 2.0)], **meta})["verdict"] == "FAIL"
+    costly = {"rows": [row("barrier", 0.0, nll=1.5), row("penalty", 2.0, nll=0.1)], **meta}
+    assert phase1_verdict(costly)["verdict"] == "FAIL" and "task loss" in phase1_verdict(costly)["reason"]
 
 
 def test_dashboard_served(client):

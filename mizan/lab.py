@@ -35,16 +35,43 @@ def _read_json(path: Path):
         return None
 
 
+COST_MARGIN_NATS = 0.1      # barrier task NLL may exceed the penalty's by at most this (PREREG)
+MATERIAL_FRACTION = 0.01    # an overshoot counts only above this fraction of eps (PREREG_4)
+
+
 def phase1_verdict(data: dict) -> dict:
-    """Apply the pre-registered criteria in experiments/phase1/README.md."""
+    """Apply the pre-registered criteria in experiments/phase1/ (README, PREREG_4)."""
     rows = data.get("rows", [])
+    eps = (data.get("meta") or {}).get("eps")
+    tol = MATERIAL_FRACTION * eps if eps else 0.0
     if any(r["method"] == "barrier" and r["violation"] > 0 for r in rows):
         return {"verdict": "FAIL", "reason": "the barrier violated the constraint"}
-    if not any(r["method"] == "penalty" and r["violation"] > 0 for r in rows):
+    pen = {r["pressure_w"]: r for r in rows if r["method"] == "penalty"}
+    worst = max(((r["task_nll"] - pen[r["pressure_w"]]["task_nll"], r["pressure_w"])
+                 for r in rows if r["method"] == "barrier" and r["pressure_w"] in pen), default=(0.0, None))
+    if worst[0] > COST_MARGIN_NATS:
+        return {"verdict": "FAIL", "reason": f"the barrier's task loss exceeds the penalty's by {worst[0]:.3g} nats "
+                                             f"at pressure {worst[1]:g} (margin {COST_MARGIN_NATS})"}
+    top = max((r["violation"] for r in pen.values()), default=0.0)
+    if top <= tol:
         return {"verdict": "INCONCLUSIVE",
-                "reason": "the barrier held, but the soft penalty also never violated the constraint, "
-                          "so this run cannot separate the two methods"}
-    return {"verdict": "PASS", "reason": "the barrier held everywhere and the soft penalty violated the constraint"}
+                "reason": f"the barrier held, but the soft penalty's largest overshoot ({top:.3g} nats) "
+                          f"is not above the materiality line ({tol:.3g}), so the methods are not separated"}
+    return {"verdict": "PASS", "reason": f"the barrier held everywhere and the soft penalty overshot by {top:.3g} nats"}
+
+
+def phase1_runs(results_dir: Path) -> list:
+    """One summary row per result file, newest last."""
+    out = []
+    for f in sorted(results_dir.glob("**/phase1*.json"), key=lambda p: p.stat().st_mtime):
+        d = _read_json(f)
+        if not d or "rows" not in d:
+            continue
+        m = d.get("meta", {})
+        out.append({"name": str(f.relative_to(results_dir)).replace("\\", "/"), "eps": m.get("eps"),
+                    "device": m.get("device", "cpu"), "max_iter": m.get("max_iter"), "quick": m.get("quick", False),
+                    "verdict": phase1_verdict(d)})
+    return out
 
 
 def make_router(require_key) -> APIRouter:
@@ -85,7 +112,7 @@ def make_router(require_key) -> APIRouter:
     def phase1():
         d = Path(os.environ.get("MIZAN_PHASE1_DIR", ROOT / "experiments" / "phase1" / "results"))
         full, quick, log = d / "phase1.json", d / "phase1_quick.json", d / "full_run.log"
-        out = {"status": "absent", "data": None, "log_tail": None, "log_age_s": None}
+        out = {"status": "absent", "data": None, "log_tail": None, "log_age_s": None, "runs": phase1_runs(d)}
         if log.is_file():
             text = log.read_text(encoding="utf-8", errors="replace").replace("\r", "\n")
             lines = [ln for ln in text.splitlines() if ln.strip() and "Loading weights" not in ln]
