@@ -115,6 +115,14 @@ Scaling: the service is stateless and CPU-bound (about 10 ms per evaluation with
 
 Deployable means the service is operable: it builds, is tested, validates input, authenticates, and reports health. It does not mean the gate is a meaningful safety judgement. See section 6.
 
+## 5b. Phase 1 result on a real model (Pythia-160M)
+
+Write-up with every run, including the inconclusive ones: [`docs/phase1-writeup.md`](docs/phase1-writeup.md).
+
+![Overshoot vs pressure](docs/figures/phase1-overshoot.png)
+
+At a binding 1.8-nat KL limit, a fixed-weight soft penalty overshot by 0.0005 → 0.326 nats as pressure rose from 1 to 1000. The log-barrier never crossed, and its task loss was within 0.04 nats of the penalty's. At 4.0 nats the result was inconclusive, and three of the six runs could not tell the methods apart. The baseline is weak (no augmented Lagrangian yet), and the limit is a trust region, not a safety property.
+
 ## 6. Roadmap and Limitations
 
 What is done: the barrier wall is correct and tested, the gate runs, the state and entropy are built correctly, and there is a `TelemetrySource` interface for a real data source to plug into.
