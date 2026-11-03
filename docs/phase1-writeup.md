@@ -35,7 +35,7 @@ Before each batch of runs I wrote down what would count as **supports**, **does 
 | Run | eps (nats) | Status | Penalty worst overshoot | Barrier overshoot | Barrier NLL − penalty NLL (worst) | Verdict |
 |---|---|---|---|---|---|---|
 | 1 | 467 (25% rule) | pre-registered | none | 0 | — | Inconclusive: limit far too loose |
-| A | 93.5 (5% rule) | pre-registered fallback | 0.0005 | 0 | +0.0006 | Inconclusive: overshoot trivial |
+| A | 93.5 (5% rule) | pre-registered fallback | 0.0005 | 0 | +0.0006 | Inconclusive: overshoot trivial (materiality rule applied after the fact) |
 | B | 1.80 (0.2% rule) | **post-hoc**, 150 iters/stage | 0.326 at w=1000 | 0 | **+1.46** at w=1000 | Failed the cost margin as run |
 | B re-run | 1.80 | declared before running; 600 iters/stage, w=1000 only | 0.326 | 0 | +0.037 | Stall was non-convergence; margin met |
 | C | 1.80 | declared; w = 1, 10, 100 | 0.051 at w=100 | 0 | +0.009 | **Supports** |
